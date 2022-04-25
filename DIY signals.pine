@@ -1,0 +1,344 @@
+//@version=5
+//
+// Author: benso87
+// benso87.com
+//
+// Credit to:
+// The_Caretaker for BBWP and PMARP indicators 
+//
+indicator(title='DIY Entry Signals', shorttitle='DIY Signals', format=format.price, precision=2, timeframe='', timeframe_gaps=true, overlay=true)
+
+
+//////////////////////////////////////////////////////////////
+// Inputs
+
+// Signal Types
+includeLong		= input.bool (true,  title='Long', 	                     inline='1', group='Signal Types')
+includeShort	= input.bool (true,  title='Short', 	                 inline='2', group='Signal Types')
+onlyConfirmed   = input.bool (true,  title='Only Confirmed Candles',     inline='3', group='Signal Types')
+useSigCheck     = input.bool (false, title='No More Signals For # Bars', inline='4', group='Signal Types')
+sigCheckBars    = input.int  (10,    title='', minval=1, maxval=50,      inline='4', group='Signal Types')
+
+// Moving Averages
+includeMA1	= input.bool	(true,		title='', 										inline='MA 1',		group='Moving Averages')
+ma1Color 	= input.color	(#ffeb3b, 	title='MA 1', 									inline='MA 1', 		group='Moving Averages')
+ma1Length 	= input.int		(21, 		title='Length', 	minval=1, 					inline='MA 1', 		group='Moving Averages')
+ma1Type 	= input.string	('EMA',	    title='Type', 		options=['SMA','EMA'], 		inline='MA 1', 		group='Moving Averages')
+includeMA2	= input.bool	(true,		title='', 										inline='MA 2',		group='Moving Averages')
+ma2Color 	= input.color	(#00e676, 	title='MA 2', 									inline='MA 2', 		group='Moving Averages')
+ma2Length 	= input.int		(55, 		title='Length', 	minval=1, 					inline='MA 2', 		group='Moving Averages')
+ma2Type 	= input.string	('EMA', 	title='Type', 		options=['SMA','EMA'], 		inline='MA 2', 		group='Moving Averages')
+includeMA3	= input.bool	(true,		title='', 										inline='MA 3',		group='Moving Averages')
+ma3Color 	= input.color	(#00bcd4, 	title='MA 3', 									inline='MA 3', 		group='Moving Averages')
+ma3Length 	= input.int		(100, 		title='Length', 	minval=1, 					inline='MA 3', 		group='Moving Averages')
+ma3Type 	= input.string	('EMA', 	title='Type', 		options=['SMA','EMA'], 		inline='MA 3', 		group='Moving Averages')
+includeMA4	= input.bool	(true,		title='', 										inline='MA 4',		group='Moving Averages')
+ma4Color 	= input.color	(#e040fb, 	title='MA 4', 									inline='MA 4', 		group='Moving Averages')
+ma4Length 	= input.int		(200, 		title='Length', 	minval=1, 					inline='MA 4', 		group='Moving Averages')
+ma4Type 	= input.string	('EMA', 	title='Type', 		options=['SMA','EMA'], 		inline='MA 4', 		group='Moving Averages')
+
+// Moving Average Crosses 
+maCrosses    = input.bool   (false, title='Highlight moving average crosses', group='Moving Average Crosses', inline='1')
+useCross1    = input.bool   (false, title='Pair 1', group='Moving Average Crosses', inline='pair1')
+cross1Color1 = input.color  (color.new(color.silver, transp=50), title='', group='Moving Average Crosses', inline='pair1')
+cross1Color2 = input.color  (color.new(color.purple, transp=50), title='', group='Moving Average Crosses', inline='pair1')
+cross1ma1Str = input.string ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], group='Moving Average Crosses', inline='pair1')
+cross1ma2Str = input.string ('MA 2', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], group='Moving Average Crosses', inline='pair1')
+useCross2    = input.bool   (false, title='Pair 1', group='Moving Average Crosses', inline='pair2')
+cross2Color1 = input.color  (color.new(color.yellow, transp=50), title='', group='Moving Average Crosses', inline='pair2')
+cross2Color2 = input.color  (color.new(color.red, transp=50), title='', group='Moving Average Crosses', inline='pair2')
+cross2ma1Str = input.string ('MA 2', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], group='Moving Average Crosses', inline='pair2')
+cross2ma2Str = input.string ('MA 4', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], group='Moving Average Crosses', inline='pair2')
+useCross3    = input.bool   (false, title='Pair 3', group='Moving Average Crosses', inline='pair3')
+cross3Color1 = input.color  (color.new(color.blue, transp=50), title='', group='Moving Average Crosses', inline='pair3')
+cross3Color2 = input.color  (color.new(color.orange, transp=50), title='', group='Moving Average Crosses', inline='pair3')
+cross3ma1Str = input.string ('MA 3', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], group='Moving Average Crosses', inline='pair3')
+cross3ma2Str = input.string ('MA 4', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], group='Moving Average Crosses', inline='pair3')
+
+// RSI
+rsiPeriod 		= input.int		(14, 		minval=1, 				title='RSI Period', 			inline='1',		group='RSI')
+rsiSource 		= input.source	(close, 							title='Source', 				inline='1',		group='RSI')
+
+// Stochastic
+periodK 		= input.int		(14, 		title='K Length', 		minval=1,	group='Stochastic')
+smoothK 		= input.int		(3, 		title='K Smoothing', 	minval=1,	group='Stochastic')
+periodD 		= input.int		(3, 		title='D Smoothing', 	minval=1,	group='Stochastic')
+stochSource 	= input.source	(close,	title='Source',						group='Stochastic')
+
+// BBWP
+bbwpPriceSource = input.source  (close,    title='Price Source',                                   	inline='1',     group='BBWP')
+bbwpBasisType   = input.string  ('SMA',    title='Basis Type',		options=['SMA', 'EMA', 'VWMA'], 	inline='1',     group='BBWP')
+bbwpLength      = input.int     (13,       title='Length',         minval=1,                       	inline='2',     group='BBWP')
+bbwpLookback    = input.int     (252,      title='Lookback',       minval=1,                       	inline='2',     group='BBWP')
+bbwpMax			= input.float	(35, 		title='BBWP Max', 		minval=0, maxval=100, step=0.01,	inline='3', 	group='BBWP')
+bbwpMin			= input.float	(0, 		title='BBWP Min', 		minval=0, maxval=100, step=0.01,	inline='3', 	group='BBWP')
+
+// PMARP
+pmarpSource     = input.source  (close,        title='Price Source',                                                       inline='1',     group='PMARP')
+pmarpLookback	= input.int		(350,			title='Lookback',		minval=1, maxval=1900,								inline='1',		group='PMARP')
+pmarpLength     = input.int     (20,           title='PMAR Length',	minval=1,                                           inline='2',     group='PMARP')
+pmarpMAType     = input.string  ('VWMA',       title='MA Type',     	options=[ 'SMA', 'EMA', 'HMA', 'RMA', 'VWMA' ],		inline='2',     group='PMARP')
+
+// ADX/DMI
+length = input.int(14, title="ADX DI Length", group='ADX/DMI')
+
+// Long Conditions
+usePriceLong    	= input.bool (true, title='Price', inline='0', group='Long Conditions')
+priceLongAB     	= input.string ('Above', title='', options=['Above', 'Below'], inline='0', group='Long Conditions')
+priceMaLongStr   	= input.string ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='0', group='Long Conditions')
+i_ma1Above2   		= input.bool (false, title='MA 1 > MA2', inline='1', group='Long Conditions')
+i_ma2Above3   		= input.bool (false, title='MA 2 > MA3', inline='2', group='Long Conditions')
+i_ma3Above4   		= input.bool (false, title='MA 3 > MA4', inline='3', group='Long Conditions')
+includeRSILong  	= input.bool (false, title='RSI', inline='4', group='Long Conditions')
+rsiLowLong   		= input.float (38, title='Above', inline='4', group='Long Conditions')
+rsiHighLong   		= input.float (62, title='Below', inline='4', group='Long Conditions')
+includeStochLong 	= input.bool (false, title='Stoch', inline='5', group='Long Conditions')
+stochKAboveD  		= input.bool (false, title='K > D', inline='5', group='Long Conditions')
+useStochRangeLong 	= input.bool (false, title='Stoch In Range?',inline='6', group='Long Conditions')
+stochLowLong  		= input.float (20, title='Low', inline='6', group='Long Conditions')
+stochHighLong  		= input.float (80, title='High', inline='6', group='Long Conditions')
+includeBBWPLong  	= input.bool (false, title='BBWP', inline='7', group='Long Conditions')
+includePMARPLong 	= input.bool (false, title='PMARP', inline='8', group='Long Conditions')
+pmarpLongAB     	= input.string ('Below', title='', options=['Above', 'Below'], inline='8', group='Long Conditions')
+pmarpThresholdLong	= input.float (15, title='', inline='8', group='Long Conditions')
+useDMILong     		= input.bool (false, title='DMI', inline='9', group='Long Conditions')
+dmiPNLong      		= input.string ('Positive', title='', options=['Positive', 'Negative'], inline='9', group='Long Conditions')
+dmiFlipLong			= input.bool (false, title='Only on flip', inline='9', group='Long Conditions')
+useADXLong     		= input.bool (false, title='ADX Range', inline='10', group='Long Conditions')
+adxABLong      		= input.string ('Below', title='', options=['Above', 'Below'], inline='10', group='Long Conditions')
+adxThresholdLong  	= input.float (20, title='', inline='10', group='Long Conditions')
+useADXDirLong		= input.bool (false, title='ADX Direction', inline='11', group='Long Conditions')
+adxDirLong			= input.string ('Rising', title='', options=['Rising', 'Falling'], inline='11', group='Long Conditions')
+
+// Short Conditions
+usePriceShort    	= input.bool  (true, title='Price', inline='0', group='Short Conditions')
+priceShortAB    	= input.string ('Above', title='', options=['Above', 'Below'], inline='0', group='Short Conditions')
+priceMaShortStr   	= input.string ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='0', group='Short Conditions')
+i_ma1Below2   		= input.bool (false, title='MA 1 < MA2', inline='1', group='Short Conditions')
+i_ma2Below3   		= input.bool (false, title='MA 2 < MA3', inline='2', group='Short Conditions')
+i_ma3Below4   		= input.bool (false, title='MA 3 < MA4', inline='3', group='Short Conditions')
+includeRSIShort  	= input.bool (false, title='RSI', inline='4', group='Short Conditions')
+rsiLowShort   		= input.float (38, title='Above', inline='4', group='Short Conditions')
+rsiHighShort  		= input.float (62, title='Below', inline='4', group='Short Conditions')
+includeStochShort 	= input.bool (false, title='Stoch', inline='5', group='Short Conditions')
+stochKBelowD  		= input.bool (false, title='K < D', inline='5', group='Short Conditions')
+useStochRangeShort  = input.bool (false, title='Stoch In Range?',inline='6', group='Short Conditions')
+stochLowShort  		= input.float (20, title='Low', inline='6', group='Short Conditions')
+stochHighShort  	= input.float (80, title='High', inline='6', group='Short Conditions')
+includeBBWPShort 	= input.bool (false, title='BBWP', inline='7', group='Short Conditions')
+includePMARPShort 	= input.bool (false, title='PMARP', inline='8', group='Short Conditions')
+pmarpShortAB    	= input.string ('Above', title='', options=['Above', 'Below'], inline='8', group='Short Conditions')
+pmarpThresholdShort	= input.float (85, title='', inline='8', group='Short Conditions')
+useDMIShort     	= input.bool  (false, title='DMI', inline='9', group='Short Conditions')
+dmiPNShort     		= input.string ('Negative', title='', options=['Positive', 'Negative'], inline='9', group='Short Conditions')
+dmiFlipShort		= input.bool (false, title='Only on flip', inline='9', group='Short Conditions')
+useADXShort     	= input.bool  (false, title='ADX Range', inline='10', group='Short Conditions')
+adxABShort     		= input.string ('Below', title='', options=['Above', 'Below'], inline='10', group='Short Conditions')
+adxThresholdShort  	= input.float  (20, title='', inline='10', group='Short Conditions')
+useADXDirShort		= input.bool (false, title='ADX Direction', inline='11', group='Short Conditions')
+adxDirShort			= input.string('Rising', title='', options=['Rising', 'Falling'], inline='11', group='Short Conditions')
+
+
+//////////////////////////////////////////////////////////////
+// Calculations
+
+// Function to calculate moving averages based on chosen type
+f_ma (S, L, T) =>
+	T == 'SMA' ? ta.sma(S,L) : ta.ema(S,L)
+
+// Moving Averages
+ma1 = f_ma(close, ma1Length, ma1Type)
+ma2 = f_ma(close, ma2Length, ma2Type)
+ma3 = f_ma(close, ma3Length, ma3Type)
+ma4 = f_ma(close, ma4Length, ma4Type)
+
+// Function to convert chosen MA to MA series
+f_convertMA (ma) =>
+    switch ma
+        'MA 1' => ma1
+        'MA 2' => ma2
+        'MA 3' => ma3
+        'MA 4' => ma4
+
+ma1Above2 	= ma1 > ma2
+ma1Above3 	= ma1 > ma3
+ma1Above4 	= ma1 > ma4
+
+ma2Above1 	= ma2 > ma1
+ma2Above3 	= ma2 > ma3
+ma2Above4 	= ma2 > ma4
+
+ma3Above1 	= ma3 > ma1
+ma3Above2 	= ma3 > ma2
+ma3Above4 	= ma3 > ma4
+
+ma4Above1 	= ma4 > ma1
+ma4Above2 	= ma4 > ma2
+ma4Above3 	= ma4 > ma3
+
+// Moving average crossover checks
+cross1ma1 = f_convertMA(cross1ma1Str)
+cross1ma2 = f_convertMA(cross1ma2Str)
+cross2ma1 = f_convertMA(cross2ma1Str)
+cross2ma2 = f_convertMA(cross2ma2Str)
+cross3ma1 = f_convertMA(cross3ma1Str)
+cross3ma2 = f_convertMA(cross3ma2Str)
+
+cross1Up = maCrosses and useCross1 ? ta.crossover(cross1ma1, cross1ma2) : false
+cross1Down = maCrosses and useCross1 ? ta.crossunder(cross1ma1, cross1ma2) : false
+cross2Up = maCrosses and useCross2 ? ta.crossover(cross2ma1, cross2ma2) : false
+cross2Down = maCrosses and useCross2 ? ta.crossunder(cross2ma1, cross2ma2) : false
+cross3Up = maCrosses and useCross3 ? ta.crossover(cross3ma1, cross3ma2) : false
+cross3Down = maCrosses and useCross3 ? ta.crossunder(cross3ma1, cross3ma2) : false
+
+crossColor = cross3Up ? cross3Color1 : cross3Down ? cross3Color2 : cross2Up ? cross2Color1 : cross2Down ? cross2Color2 : cross1Up ? cross1Color1 : cross1Down ? cross1Color2 : na
+
+// Price check conversions
+priceMaLong = f_convertMA(priceMaLongStr)
+priceMaShort = f_convertMA(priceMaShortStr)
+
+// RSI
+up = ta.rma(math.max(ta.change(rsiSource), 0), rsiPeriod)
+down = ta.rma(-math.min(ta.change(rsiSource), 0), rsiPeriod)
+rsi = down == 0 ? 100 : up == 0 ? 0 : 100 - (100 / (1 + up / down))
+
+// Stochastic
+k = ta.sma(ta.stoch(stochSource, high, low, periodK), smoothK)
+d = ta.sma(k, periodD)
+
+stochInRangeLong = stochHighLong > k and k > stochLowLong
+stochInRangeShort = stochHighShort > k and k > stochLowShort
+
+// BBWP
+// Credit to The_Caretaker
+f_maType ( _price, _len, _type ) =>
+    _type == 'SMA' ? ta.sma ( _price, _len ) : _type == 'EMA' ? ta.ema ( _price, _len ) : ta.vwma ( _price, _len )
+
+f_bbwp ( _price, _bbwLen, _bbwpLen, _type ) =>
+    float _basis = f_maType ( _price, _bbwLen, _type )
+    float _dev = ta.stdev ( _price, _bbwLen )
+    _bbw = ( _basis + _dev - ( _basis - _dev )) / _basis
+    _bbwSum = 0.0
+    _len = bar_index < _bbwpLen ? bar_index : _bbwpLen
+    for _i = 1 to _len by 1
+        _bbwSum += ( _bbw[_i] > _bbw ? 0 : 1 )
+        _bbwSum
+    _return = bar_index >= _bbwLen ? ( _bbwSum / _len) * 100 : na
+    _return
+
+bbwp	= f_bbwp ( bbwpPriceSource, bbwpLength, bbwpLookback, bbwpBasisType )
+
+// PMARP
+// Credit to The_Caretaker
+f_prior_sum ( _P, _X ) =>
+    math.sum ( _P[1], _X - 1 )
+
+f_ma_val ( _P, _typ, _len ) =>
+    _typ == 'SMA' ? ta.sma ( _P, _len ) : _typ == 'EMA' ? ta.ema ( _P, _len ) : _typ == 'RMA' ? ta.rma ( _P, _len ) : _typ == 'HMA' ? ta.hma ( _P, _len ) : ta.vwma ( _P, _len )
+
+f_pmarp ( _price, _pmarLen, _pmarpLen, _type_p ) =>
+    _pmar = math.abs ( _price / f_ma_val ( _price, _type_p, _pmarLen ))
+    _pmarpSum = 0
+    _len = bar_index < _pmarpLen ? bar_index : _pmarpLen
+    for i = 1 to _len by 1
+        _pmarpSum += ( _pmar[i] > _pmar ? 0 : 1 )
+        _pmarpSum
+    _return = bar_index >= _pmarLen ? _pmarpSum / _len * 100 : na
+
+ma          = f_ma_val ( pmarpSource, pmarpMAType, pmarpLength )
+pmar        = pmarpSource / ma
+pmarp       = f_pmarp ( pmarpSource, pmarpLength, pmarpLookback, pmarpMAType ) 
+
+// ADX/DMI
+dUp = ta.change(high)
+dDown = -ta.change(low)
+plusDM = na(dUp) ? na : (dUp > dDown and dUp > 0 ? dUp : 0)
+minusDM = na(dDown) ? na : (dDown > dUp and dDown > 0 ? dDown : 0)
+trur = ta.rma(ta.tr, length)
+plus = fixnan(100 * ta.rma(plusDM, length) / trur)
+minus = fixnan(100 * ta.rma(minusDM, length) / trur)
+sum = plus + minus
+adx = 100 * ta.rma(math.abs(plus - minus) / (sum == 0 ? 1 : sum), length)
+diff = plus - minus
+
+// Calculations and variables to determine if a signal has been plotted recently
+var sigCheckArrayL = array.new_int (0)
+var sigCheckArrayS = array.new_int (0)
+
+sigCheckL = array.sum(sigCheckArrayL) > 0 ? true : false
+sigCheckS = array.sum(sigCheckArrayS) > 0 ? true : false
+
+plotchar(sigCheckL, title='sigCheckL', char='.', color=color.new(color.white, transp=100))
+plotchar(sigCheckS, title='sigCheckS', char='.', color=color.new(color.white, transp=100))
+
+// Signals
+priceSignalLong     = not usePriceLong or (priceLongAB == 'Above' and close >= priceMaLong) or (priceLongAB == 'Below' and close <= priceMaLong)
+priceSignalShort    = not usePriceShort or (priceShortAB == 'Above' and close >= priceMaShort) or (priceShortAB == 'Below' and close <= priceMaShort)
+
+maSignalLong 		= (not i_ma1Above2 or ma1Above2) and (not i_ma2Above3 or ma2Above3) and (not i_ma3Above4 or ma3Above4)
+maSignalShort		= (not i_ma1Below2 or ma2Above1) and (not i_ma2Below3 or ma3Above2) and (not i_ma3Below4 or ma4Above3)
+
+rsiSignalLong		= not includeRSILong or (rsiHighLong > rsi and rsi > rsiLowLong) 
+rsiSignalShort		= not includeRSIShort or (rsiHighShort > rsi and rsi > rsiLowShort)
+
+stochSignalLong		= not includeStochLong or ((not useStochRangeLong or stochInRangeLong) and (not stochKAboveD or k > d))
+stochSignalShort	= not includeStochShort or ((not useStochRangeShort or stochInRangeShort) and (not stochKBelowD or k < d))
+
+bbwpSignalLong		= not includeBBWPLong or bbwp < bbwpMax and bbwp > bbwpMin
+bbwpSignalShort		= not includeBBWPShort or bbwp < bbwpMax and bbwp > bbwpMin
+
+pmarpSignalLong		= not includePMARPLong or (pmarpLongAB == 'Above' and pmarp >= pmarpThresholdLong) or (pmarpLongAB == 'Below' and pmarp <= pmarpThresholdLong)
+pmarpSignalShort	= not includePMARPShort or (pmarpShortAB == 'Above' and pmarp >= pmarpThresholdShort) or (pmarpShortAB == 'Below' and pmarp <= pmarpThresholdShort)
+
+dmiSignalLong       = not useDMILong or ((not dmiFlipLong or (diff > 0 and diff [1] <= 0) or (diff < 0 and diff[1] >= 0)) and ((dmiPNLong == 'Positive' and diff > 0) or (dmiPNLong == 'Negative' and diff < 0)))
+dmiSignalShort      = not useDMIShort or ((not dmiFlipShort or (diff > 0 and diff [1] <= 0) or (diff < 0 and diff[1] >= 0)) and ((dmiPNShort == 'Positive' and diff > 0) or (dmiPNShort == 'Negative' and diff < 0)))
+
+adxSignalLong       = not useADXLong or (adxABLong == 'Above' and adx >= adxThresholdLong) or (adxABLong == 'Below' and adx <= adxThresholdLong)
+adxSignalShort      = not useADXShort or (adxABShort == 'Above' and adx >= adxThresholdShort) or (adxABShort == 'Below' and adx <= adxThresholdShort)
+
+adxDirSignalLong	= not useADXDirLong or (adxDirLong == 'Rising' and adx >= adx[1]) or (adxDirLong == 'Falling' and adx <= adx[1])
+adxDirSignalShort	= not useADXDirShort or (adxDirShort == 'Rising' and adx >= adx[1]) or (adxDirShort == 'Falling' and adx <= adx[1])
+
+longSignal 			= includeLong and (not useSigCheck or not sigCheckL) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalLong and maSignalLong and rsiSignalLong and stochSignalLong and bbwpSignalLong and pmarpSignalLong and dmiSignalLong and adxSignalLong and adxDirSignalLong
+shortSignal 		= includeShort and (not useSigCheck or not sigCheckS) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalShort and maSignalShort and rsiSignalShort and stochSignalShort and bbwpSignalShort and pmarpSignalShort and dmiSignalShort and adxSignalShort and adxDirSignalShort
+
+// Check if a new signal should not be plotted
+
+array.push(sigCheckArrayL, longSignal ? 1 : 0)
+array.push(sigCheckArrayS, shortSignal ? 1 : 0)
+
+if array.size(sigCheckArrayL) > sigCheckBars
+    array.remove(sigCheckArrayL, 0)
+    
+if array.size(sigCheckArrayS) > sigCheckBars
+    array.remove(sigCheckArrayS, 0)
+
+//////////////////////////////////////////////////////////////
+// Plots
+
+// Moving Averages
+plot(includeMA1 ? ma1 : na, title='MA 1', color=ma1Color, linewidth=2, offset=0)
+plot(includeMA2 ? ma2 : na, title='MA 2', color=ma2Color, linewidth=2, offset=0)
+plot(includeMA3 ? ma3 : na, title='MA 3', color=ma3Color, linewidth=2, offset=0)
+plot(includeMA4 ? ma4 : na, title='MA 4', color=ma4Color, linewidth=2, offset=0)
+
+// Moving Average Crosses
+bgcolor(crossColor)
+
+//Signals
+plotshape(longSignal,  title='Long',  location=location.belowbar, style=shape.triangleup,   size=size.small, color=color.new(color.blue, transp=0))
+plotshape(shortSignal, title='Short', location=location.abovebar, style=shape.triangledown, size=size.small, color=color.new(color.red,  transp=0))
+
+
+//////////////////////////////////////////////////////////////
+// Alerts
+
+alertcondition(longSignal, title='Long Signal', message='DIY Long Signal')
+alertcondition(shortSignal, title='Short Signal', message='DIY Short Signal')
+alertcondition(longSignal or shortSignal, title='Any Signal', message='DIY Sgnal')
+
+alertcondition(cross1Up or cross1Down, title='MA Pair 1 Cross', message='DIY MA Cross Signal')
+alertcondition(cross2Up or cross2Down, title='MA Pair 2 Cross', message='DIY MA Cross Signal')
+alertcondition(cross3Up or cross3Down, title='MA Pair 3 Cross', message='DIY MA Cross Signal')
+
+//////////////////////////////////////////////////////////////
