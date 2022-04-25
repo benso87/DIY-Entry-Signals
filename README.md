@@ -31,6 +31,9 @@ PMARP:
 Choose settings for the Price Moving Average Ratio & Percentile. This calculates the ratio between a source price and moving average over a lookback period. This was also created by The_Caretaker, and it is a free and open source indicator.
 This section allows the user to choose price source, lookback, PMAR length, and moving average type.
 
+DMI/ADX:
+Choose settings for the Directional Movement Index and the Average Directional Index. This shows which direction the price is moving by comparing prior highs and lows and calculating a positive directional movement and a negative directional movement. The average of the positive and negative movements is used to plot the ADX line.
+
 Long/Short Conditions:
 Choose which indicators will be used to determine entry signals, as well as some options for each indicator that is included.
 
