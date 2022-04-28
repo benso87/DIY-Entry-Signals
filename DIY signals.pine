@@ -44,7 +44,7 @@ cross1Color1 = input.color  (color.new(color.silver, transp=50), title='', group
 cross1Color2 = input.color  (color.new(color.purple, transp=50), title='', group='Moving Average Crosses', inline='pair1')
 cross1ma1Str = input.string ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], group='Moving Average Crosses', inline='pair1')
 cross1ma2Str = input.string ('MA 2', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], group='Moving Average Crosses', inline='pair1')
-useCross2    = input.bool   (false, title='Pair 1', group='Moving Average Crosses', inline='pair2')
+useCross2    = input.bool   (false, title='Pair 2', group='Moving Average Crosses', inline='pair2')
 cross2Color1 = input.color  (color.new(color.yellow, transp=50), title='', group='Moving Average Crosses', inline='pair2')
 cross2Color2 = input.color  (color.new(color.red, transp=50), title='', group='Moving Average Crosses', inline='pair2')
 cross2ma1Str = input.string ('MA 2', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], group='Moving Average Crosses', inline='pair2')
@@ -81,6 +81,16 @@ pmarpMAType     = input.string  ('VWMA',       title='MA Type',     	options=[ '
 
 // ADX/DMI
 length = input.int(14, title="ADX DI Length", group='ADX/DMI')
+
+// Days Off
+useOffDays  = input.bool(false, title='Days Off', group='Days Off')
+offSun      = input.bool(true, title='Sunday', group='Days Off')
+offMon      = input.bool(false, title='Monday', group='Days Off')
+offTue      = input.bool(false, title='Tuesday', group='Days Off')
+offWed      = input.bool(false, title='Wednesday', group='Days Off')
+offThur     = input.bool(false, title='Thursday', group='Days Off')
+offFri      = input.bool(false, title='Friday', group='Days Off')
+offSat      = input.bool(true, title='Saturday', group='Days Off')
 
 // Long Conditions
 usePriceLong    	= input.bool (true, title='Price', inline='0', group='Long Conditions')
@@ -268,10 +278,13 @@ var sigCheckArrayS = array.new_int (0)
 sigCheckL = array.sum(sigCheckArrayL) > 0 ? true : false
 sigCheckS = array.sum(sigCheckArrayS) > 0 ? true : false
 
-plotchar(sigCheckL, title='sigCheckL', char='.', color=color.new(color.white, transp=100))
-plotchar(sigCheckS, title='sigCheckS', char='.', color=color.new(color.white, transp=100))
+// For testing signal checks
+// plotchar(sigCheckL, title='sigCheckL', char='.', color=color.new(color.white, transp=100))
+// plotchar(sigCheckS, title='sigCheckS', char='.', color=color.new(color.white, transp=100))
 
 // Signals
+dayOff = useOffDays and ((offSun and dayofweek == dayofweek.sunday) or (offMon and dayofweek == dayofweek.monday) or (offTue and dayofweek == dayofweek.tuesday) or (offWed and dayofweek == dayofweek.wednesday) or (offThur and dayofweek == dayofweek.thursday) or (offFri and dayofweek == dayofweek.friday) or (offSat and dayofweek == dayofweek.saturday))
+
 priceSignalLong     = not usePriceLong or (priceLongAB == 'Above' and close >= priceMaLong) or (priceLongAB == 'Below' and close <= priceMaLong)
 priceSignalShort    = not usePriceShort or (priceShortAB == 'Above' and close >= priceMaShort) or (priceShortAB == 'Below' and close <= priceMaShort)
 
@@ -299,8 +312,8 @@ adxSignalShort      = not useADXShort or (adxABShort == 'Above' and adx >= adxTh
 adxDirSignalLong	= not useADXDirLong or (adxDirLong == 'Rising' and adx >= adx[1]) or (adxDirLong == 'Falling' and adx <= adx[1])
 adxDirSignalShort	= not useADXDirShort or (adxDirShort == 'Rising' and adx >= adx[1]) or (adxDirShort == 'Falling' and adx <= adx[1])
 
-longSignal 			= includeLong and (not useSigCheck or not sigCheckL) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalLong and maSignalLong and rsiSignalLong and stochSignalLong and bbwpSignalLong and pmarpSignalLong and dmiSignalLong and adxSignalLong and adxDirSignalLong
-shortSignal 		= includeShort and (not useSigCheck or not sigCheckS) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalShort and maSignalShort and rsiSignalShort and stochSignalShort and bbwpSignalShort and pmarpSignalShort and dmiSignalShort and adxSignalShort and adxDirSignalShort
+longSignal 			= includeLong and not dayOff and (not useSigCheck or not sigCheckL) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalLong and maSignalLong and rsiSignalLong and stochSignalLong and bbwpSignalLong and pmarpSignalLong and dmiSignalLong and adxSignalLong and adxDirSignalLong
+shortSignal 		= includeShort and not dayOff and (not useSigCheck or not sigCheckS) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalShort and maSignalShort and rsiSignalShort and stochSignalShort and bbwpSignalShort and pmarpSignalShort and dmiSignalShort and adxSignalShort and adxDirSignalShort
 
 // Check if a new signal should not be plotted
 
