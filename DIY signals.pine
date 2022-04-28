@@ -16,8 +16,8 @@ indicator(title='DIY Entry Signals', shorttitle='DIY Signals', format=format.pri
 includeLong		= input.bool (true,  title='Long', 	                     inline='1', group='Signal Types')
 includeShort	= input.bool (true,  title='Short', 	                 inline='2', group='Signal Types')
 onlyConfirmed   = input.bool (true,  title='Only Confirmed Candles',     inline='3', group='Signal Types')
-useSigCheck     = input.bool (false, title='No More Signals For # Bars', inline='4', group='Signal Types')
-sigCheckBars    = input.int  (10,    title='', minval=1, maxval=50,      inline='4', group='Signal Types')
+useSigCheck     = input.bool (false, title='No More Signals For # Bars', inline='5', group='Signal Types')
+sigCheckBars    = input.int  (10,    title='', minval=1, maxval=50,      inline='5', group='Signal Types')
 
 // Moving Averages
 includeMA1	= input.bool	(true,		title='', 										inline='MA 1',		group='Moving Averages')
@@ -44,7 +44,7 @@ cross1Color1 = input.color  (color.new(color.silver, transp=50), title='', group
 cross1Color2 = input.color  (color.new(color.purple, transp=50), title='', group='Moving Average Crosses', inline='pair1')
 cross1ma1Str = input.string ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], group='Moving Average Crosses', inline='pair1')
 cross1ma2Str = input.string ('MA 2', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], group='Moving Average Crosses', inline='pair1')
-useCross2    = input.bool   (false, title='Pair 1', group='Moving Average Crosses', inline='pair2')
+useCross2    = input.bool   (false, title='Pair 2', group='Moving Average Crosses', inline='pair2')
 cross2Color1 = input.color  (color.new(color.yellow, transp=50), title='', group='Moving Average Crosses', inline='pair2')
 cross2Color2 = input.color  (color.new(color.red, transp=50), title='', group='Moving Average Crosses', inline='pair2')
 cross2ma1Str = input.string ('MA 2', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], group='Moving Average Crosses', inline='pair2')
@@ -82,13 +82,30 @@ pmarpMAType     = input.string  ('VWMA',       title='MA Type',     	options=[ '
 // ADX/DMI
 length = input.int(14, title="ADX DI Length", group='ADX/DMI')
 
+// Days Off
+useOffDays  = input.bool(false, title='Days Off', group='Days Off')
+offSun      = input.bool(true, title='Sunday', group='Days Off')
+offMon      = input.bool(false, title='Monday', group='Days Off')
+offTue      = input.bool(false, title='Tuesday', group='Days Off')
+offWed      = input.bool(false, title='Wednesday', group='Days Off')
+offThur     = input.bool(false, title='Thursday', group='Days Off')
+offFri      = input.bool(false, title='Friday', group='Days Off')
+offSat      = input.bool(true, title='Saturday', group='Days Off')
+
+// Time Off
+useTimeOff  = input.bool(false, title='Time Off', group='Time Off')
+startTimeH = input.int(12, title='Start (UTC)', minval=0, maxval=23, group='Time Off', inline='start')
+startTimeM = input.int(0, title=':', minval=0, maxval=59, group='Time Off', inline='start')
+stopTimeH  = input.int(4, title='Stop (UTC)', minval=0, maxval=23, group='Time Off', inline='stop')
+stopTimeM  = input.int(0, title=':', minval=0, maxval=59, group='Time Off', inline='stop')
+
 // Long Conditions
 usePriceLong    	= input.bool (true, title='Price', inline='0', group='Long Conditions')
 priceLongAB     	= input.string ('Above', title='', options=['Above', 'Below'], inline='0', group='Long Conditions')
 priceMaLongStr   	= input.string ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='0', group='Long Conditions')
-i_ma1Above2   		= input.bool (false, title='MA 1 > MA2', inline='1', group='Long Conditions')
-i_ma2Above3   		= input.bool (false, title='MA 2 > MA3', inline='2', group='Long Conditions')
-i_ma3Above4   		= input.bool (false, title='MA 3 > MA4', inline='3', group='Long Conditions')
+i_ma1Above2   		= input.bool (false, title='MA 1 > MA 2', inline='1', group='Long Conditions')
+i_ma2Above3   		= input.bool (false, title='MA 2 > MA 3', inline='2', group='Long Conditions')
+i_ma3Above4   		= input.bool (false, title='MA 3 > MA 4', inline='3', group='Long Conditions')
 includeRSILong  	= input.bool (false, title='RSI', inline='4', group='Long Conditions')
 rsiLowLong   		= input.float (38, title='Above', inline='4', group='Long Conditions')
 rsiHighLong   		= input.float (62, title='Below', inline='4', group='Long Conditions')
@@ -114,9 +131,9 @@ adxDirLong			= input.string ('Rising', title='', options=['Rising', 'Falling'], 
 usePriceShort    	= input.bool  (true, title='Price', inline='0', group='Short Conditions')
 priceShortAB    	= input.string ('Above', title='', options=['Above', 'Below'], inline='0', group='Short Conditions')
 priceMaShortStr   	= input.string ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='0', group='Short Conditions')
-i_ma1Below2   		= input.bool (false, title='MA 1 < MA2', inline='1', group='Short Conditions')
-i_ma2Below3   		= input.bool (false, title='MA 2 < MA3', inline='2', group='Short Conditions')
-i_ma3Below4   		= input.bool (false, title='MA 3 < MA4', inline='3', group='Short Conditions')
+i_ma1Below2   		= input.bool (false, title='MA 1 < MA 2', inline='1', group='Short Conditions')
+i_ma2Below3   		= input.bool (false, title='MA 2 < MA 3', inline='2', group='Short Conditions')
+i_ma3Below4   		= input.bool (false, title='MA 3 < MA 4', inline='3', group='Short Conditions')
 includeRSIShort  	= input.bool (false, title='RSI', inline='4', group='Short Conditions')
 rsiLowShort   		= input.float (38, title='Above', inline='4', group='Short Conditions')
 rsiHighShort  		= input.float (62, title='Below', inline='4', group='Short Conditions')
@@ -141,6 +158,8 @@ adxDirShort			= input.string('Rising', title='', options=['Rising', 'Falling'], 
 
 //////////////////////////////////////////////////////////////
 // Calculations
+
+noColor = color.new(color.white, transp=100)
 
 // Function to calculate moving averages based on chosen type
 f_ma (S, L, T) =>
@@ -268,10 +287,27 @@ var sigCheckArrayS = array.new_int (0)
 sigCheckL = array.sum(sigCheckArrayL) > 0 ? true : false
 sigCheckS = array.sum(sigCheckArrayS) > 0 ? true : false
 
-plotchar(sigCheckL, title='sigCheckL', char='.', color=color.new(color.white, transp=100))
-plotchar(sigCheckS, title='sigCheckS', char='.', color=color.new(color.white, transp=100))
+// For testing signal checks
+// plotchar(sigCheckL, title='sigCheckL', char='.', color=noColor)
+// plotchar(sigCheckS, title='sigCheckS', char='.', color=noColor)
+
+// Time Off
+f_timeSession (H, M) =>
+    h = H < 10 ? '0' + str.tostring(H) : str.tostring(H)
+    m = M < 10 ? '0' + str.tostring(M) : str.tostring(M)
+    t = h + m
+
+startTime = startTimeH * 100 + startTimeM
+startTimeStr = f_timeSession(startTimeH, startTimeM)
+stopTime = stopTimeH * 100 + stopTimeM
+stopTimeStr = f_timeSession(stopTimeH, stopTimeM)
+
+timeOffSession = startTime <= stopTime ? time(timeframe.period, session=startTimeStr + '-' + stopTimeStr) : time(timeframe.period, session='0000-' + stopTimeStr + ',' + startTimeStr + '-2359')
 
 // Signals
+dayOff = useOffDays and ((offSun and dayofweek == dayofweek.sunday) or (offMon and dayofweek == dayofweek.monday) or (offTue and dayofweek == dayofweek.tuesday) or (offWed and dayofweek == dayofweek.wednesday) or (offThur and dayofweek == dayofweek.thursday) or (offFri and dayofweek == dayofweek.friday) or (offSat and dayofweek == dayofweek.saturday))
+timeOff = useTimeOff and timeOffSession
+
 priceSignalLong     = not usePriceLong or (priceLongAB == 'Above' and close >= priceMaLong) or (priceLongAB == 'Below' and close <= priceMaLong)
 priceSignalShort    = not usePriceShort or (priceShortAB == 'Above' and close >= priceMaShort) or (priceShortAB == 'Below' and close <= priceMaShort)
 
@@ -299,8 +335,8 @@ adxSignalShort      = not useADXShort or (adxABShort == 'Above' and adx >= adxTh
 adxDirSignalLong	= not useADXDirLong or (adxDirLong == 'Rising' and adx >= adx[1]) or (adxDirLong == 'Falling' and adx <= adx[1])
 adxDirSignalShort	= not useADXDirShort or (adxDirShort == 'Rising' and adx >= adx[1]) or (adxDirShort == 'Falling' and adx <= adx[1])
 
-longSignal 			= includeLong and (not useSigCheck or not sigCheckL) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalLong and maSignalLong and rsiSignalLong and stochSignalLong and bbwpSignalLong and pmarpSignalLong and dmiSignalLong and adxSignalLong and adxDirSignalLong
-shortSignal 		= includeShort and (not useSigCheck or not sigCheckS) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalShort and maSignalShort and rsiSignalShort and stochSignalShort and bbwpSignalShort and pmarpSignalShort and dmiSignalShort and adxSignalShort and adxDirSignalShort
+longSignal 			= includeLong and not dayOff  and not timeOff and (not useSigCheck or not sigCheckL) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalLong and maSignalLong and rsiSignalLong and stochSignalLong and bbwpSignalLong and pmarpSignalLong and dmiSignalLong and adxSignalLong and adxDirSignalLong
+shortSignal 		= includeShort and not dayOff and not timeOff and (not useSigCheck or not sigCheckS) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalShort and maSignalShort and rsiSignalShort and stochSignalShort and bbwpSignalShort and pmarpSignalShort and dmiSignalShort and adxSignalShort and adxDirSignalShort
 
 // Check if a new signal should not be plotted
 
