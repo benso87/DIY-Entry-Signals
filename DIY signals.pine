@@ -437,7 +437,7 @@ plotshape(shortSignal, title='Short', location=location.abovebar, style=shape.tr
 
 alertcondition(longSignal, title='Long Signal', message='DIY Long Signal')
 alertcondition(shortSignal, title='Short Signal', message='DIY Short Signal')
-alertcondition(longSignal or shortSignal, title='Any Signal', message='DIY Sgnal')
+alertcondition(longSignal or shortSignal, title='Any Signal', message='DIY Signal')
 
 alertcondition(cross1Up or cross1Down, title='MA Pair 1 Cross', message='DIY MA Cross Signal')
 alertcondition(cross2Up or cross2Down, title='MA Pair 2 Cross', message='DIY MA Cross Signal')
