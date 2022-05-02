@@ -140,7 +140,7 @@ srsiLowLong         = input.float   (0, title='Low', minval=0, maxval=100, inlin
 srsiHighLong        = input.float   (10, title='High', minval=0, maxval=100, inline='srsi', group='Long Conditions')
 includeBBLong       = input.bool    (false, title='Bollinger Bands', inline='bb', group='Long Conditions')
 includBBBiasLong    = input.bool    (false, title='Bias', inline='bb', group='Long Conditions')
-includeBBTestLong   = input.bool    (false, title='Test Lower', inline='bb', group='Long Conditions')
+includeBBTestLong   = input.bool    (false, title='Test Lower (Experimental)', inline='bb', group='Long Conditions')
 includeBBWPLong  	= input.bool    (false, title='BBWP', inline='bbwp', group='Long Conditions')
 includePMARPLong 	= input.bool    (false, title='PMARP', inline='pmarp', group='Long Conditions')
 pmarpLongAB     	= input.string  ('Below', title='', options=['Above', 'Below'], inline='pmarp', group='Long Conditions')
@@ -174,7 +174,7 @@ srsiLowShort        = input.float   (90, title='Low', minval=0, maxval=100, inli
 srsiHighShort       = input.float   (100, title='High', minval=0, maxval=100, inline='srsi', group='Short Conditions')
 includeBBShort      = input.bool    (false, title='Bollinger Bands', inline='bb', group='Short Conditions')
 includBBBiasShort   = input.bool    (false, title='Bias', inline='bb', group='Short Conditions')
-includeBBTestShort  = input.bool    (false, title='Test Upper', inline='bb', group='Short Conditions')
+includeBBTestShort  = input.bool    (false, title='Test Upper (Experimental)', inline='bb', group='Short Conditions')
 includeBBWPShort 	= input.bool    (false, title='BBWP', inline='bbwp', group='Short Conditions')
 includePMARPShort 	= input.bool    (false, title='PMARP', inline='pmarp', group='Short Conditions')
 pmarpShortAB    	= input.string  ('Above', title='', options=['Above', 'Below'], inline='pmarp', group='Short Conditions')
@@ -413,7 +413,7 @@ if array.size(sigCheckArrayS) > sigCheckBars
 // Plots
 
 // Background
-bgcolor(dayOff or timeOff ? color.new(color.purple, transp=70) : crossColor)
+bgcolor(dayOff or timeOff ? color.new(color.purple, transp=80) : crossColor)
 
 // Moving Averages
 plot(includeMA1 ? ma1 : na, title='MA 1', color=ma1Color, linewidth=2, offset=0)
