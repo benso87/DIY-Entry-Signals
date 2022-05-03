@@ -69,17 +69,19 @@ stochSource = input.source  (close, title='Source', group='Stochastic')
 periodK 	= input.int     (14, title='K Length', minval=1, group='Stochastic')
 smoothK 	= input.int     (3, title='K Smoothing', minval=1, group='Stochastic')
 periodD 	= input.int     (3, title='D Smoothing', minval=1, group='Stochastic')
+kdSig       = input.bool    (false, title='K & D', group='Stochastic', tooltip='Turn this on to only signal when both K and D are in the selected range.')
 
 // Stoch RSI
 srsiSmoothK = input.int   (3, title='K', minval=1, group='Stochastic RSI')
 srsiSmoothD = input.int   (3, title='D', minval=1, group='Stochastic RSI')
 srsiLength  = input.int   (14, title='Stoch Length', minval=1, group='Stochastic RSI')
+srsiKDSig   = input.bool  (false, title='K & D', group='Stochastic RSI', tooltip='Turn this on to only signal when both K and D are in the selected range.')
 
 // Bollinger Bands
 bbSource    = input.source (close, title='Source', group='Bollinger Bands')
 bbLength    = input.int    (20, minval=1, group='Bollinger Bands')
 bbMult      = input.float  (2.0, minval=0.001, maxval=50, title="StdDev", group='Bollinger Bands')
-bbBiasMAStr = input.string ('MA 4', title='Moving Average for Bias', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], group='Bollinger Bands')
+bbBiasMAStr = input.string ('MA 4', title='Moving Average for Bias', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], group='Bollinger Bands', tooltip='Bias is determined by the BB midline being above or below the chosen moving average.')
 plotBB      = input.bool   (false, title='Plot', group='Bollinger Bands')
 bbFill      = input.color  (noColor, title='Fill Color', group='Bollinger Bands')
 biasFill    = input.bool   (false, title='Color Based on Bias', group='Bollinger Bands')
@@ -139,15 +141,15 @@ includeSRSILong     = input.bool    (false, title='Stoch RSI', inline='srsi', gr
 srsiLowLong         = input.float   (0, title='Low', minval=0, maxval=100, inline='srsi', group='Long Conditions')
 srsiHighLong        = input.float   (10, title='High', minval=0, maxval=100, inline='srsi', group='Long Conditions')
 includeBBLong       = input.bool    (false, title='Bollinger Bands', inline='bb', group='Long Conditions')
-includBBBiasLong    = input.bool    (false, title='Bias', inline='bb', group='Long Conditions')
-includeBBTestLong   = input.bool    (false, title='Test Lower (Experimental)', inline='bb', group='Long Conditions')
+includBBBiasLong    = input.bool    (false, title='Bias', inline='bb', group='Long Conditions', tooltip='Signal only if the BB midline is above the chose moving average.')
+includeBBTestLong   = input.bool    (false, title='Test Lower (Experimental)', inline='bb', group='Long Conditions', tooltip='Signal only on a test of the lower band.')
 includeBBWPLong  	= input.bool    (false, title='BBWP', inline='bbwp', group='Long Conditions')
 includePMARPLong 	= input.bool    (false, title='PMARP', inline='pmarp', group='Long Conditions')
 pmarpLongAB     	= input.string  ('Below', title='', options=['Above', 'Below'], inline='pmarp', group='Long Conditions')
 pmarpThresholdLong	= input.float   (15, title='', inline='pmarp', group='Long Conditions')
 useDMILong     		= input.bool    (false, title='DMI', inline='dmi', group='Long Conditions')
 dmiPNLong      		= input.string  ('Positive', title='', options=['Positive', 'Negative'], inline='dmi', group='Long Conditions')
-dmiFlipLong			= input.bool    (false, title='Only on flip', inline='dmi', group='Long Conditions')
+dmiFlipLong			= input.bool    (false, title='Only on flip', inline='dmi', group='Long Conditions', tooltip='Signal only on the bar where the DMI flip occurs.')
 useADXLong     		= input.bool    (false, title='ADX Range', inline='adx', group='Long Conditions')
 adxABLong      		= input.string  ('Below', title='', options=['Above', 'Below'], inline='adx', group='Long Conditions')
 adxThresholdLong  	= input.float   (20, title='', inline='adx', group='Long Conditions')
@@ -173,15 +175,15 @@ includeSRSIShort    = input.bool    (false, title='Stoch RSI', inline='srsi', gr
 srsiLowShort        = input.float   (90, title='Low', minval=0, maxval=100, inline='srsi', group='Short Conditions')
 srsiHighShort       = input.float   (100, title='High', minval=0, maxval=100, inline='srsi', group='Short Conditions')
 includeBBShort      = input.bool    (false, title='Bollinger Bands', inline='bb', group='Short Conditions')
-includBBBiasShort   = input.bool    (false, title='Bias', inline='bb', group='Short Conditions')
-includeBBTestShort  = input.bool    (false, title='Test Upper (Experimental)', inline='bb', group='Short Conditions')
+includBBBiasShort   = input.bool    (false, title='Bias', inline='bb', group='Short Conditions', tooltip='Signal only if the BB midline is below the chosen moving average.')
+includeBBTestShort  = input.bool    (false, title='Test Upper (Experimental)', inline='bb', group='Short Conditions', tooltip='Signal only on a test of the upper band.')
 includeBBWPShort 	= input.bool    (false, title='BBWP', inline='bbwp', group='Short Conditions')
 includePMARPShort 	= input.bool    (false, title='PMARP', inline='pmarp', group='Short Conditions')
 pmarpShortAB    	= input.string  ('Above', title='', options=['Above', 'Below'], inline='pmarp', group='Short Conditions')
 pmarpThresholdShort	= input.float   (85, title='', inline='pmarp', group='Short Conditions')
 useDMIShort     	= input.bool    (false, title='DMI', inline='dmi', group='Short Conditions')
 dmiPNShort     		= input.string  ('Negative', title='', options=['Positive', 'Negative'], inline='dmi', group='Short Conditions')
-dmiFlipShort		= input.bool    (false, title='Only on flip', inline='dmi', group='Short Conditions')
+dmiFlipShort		= input.bool    (false, title='Only on flip', inline='dmi', group='Short Conditions', tooltip='Signal only on the bar where the DMI flip occurs.')
 useADXShort     	= input.bool    (false, title='ADX Range', inline='adx', group='Short Conditions')
 adxABShort     		= input.string  ('Below', title='', options=['Above', 'Below'], inline='adx', group='Short Conditions')
 adxThresholdShort  	= input.float   (20, title='', inline='adx', group='Short Conditions')
@@ -260,12 +262,15 @@ rsi = down == 0 ? 100 : up == 0 ? 0 : 100 - (100 / (1 + up / down))
 k = ta.sma(ta.stoch(stochSource, high, low, periodK), smoothK)
 d = ta.sma(k, periodD)
 
-stochInRangeLong = stochHighLong > k and k > stochLowLong
-stochInRangeShort = stochHighShort > k and k > stochLowShort
+stochInRangeLong = kdSig ? stochHighLong > k and k > stochLowLong and stochHighLong > d and d > stochLowLong : stochHighLong > k and k > stochLowLong
+stochInRangeShort = kdSig? stochHighShort > k and k > stochLowShort and stochHighShort > d and d > stochLowShort : stochHighShort > k and k > stochLowShort
 
 // Stoch RSI
 srsiK = ta.sma(ta.stoch(rsi, rsi, rsi, srsiLength), srsiSmoothK)
 srsiD = ta.sma(k, srsiSmoothD)
+
+srsiInRangeLong = srsiKDSig ? srsiK > srsiLowLong and srsiK < srsiHighLong and srsiD > srsiLowLong and srsiD < srsiLowLong : srsiK > srsiLowLong and srsiK < srsiHighLong
+srsiInRangeShort = srsiKDSig ? srsiK > srsiLowShort and srsiK < srsiHighShort and srsiD > srsiLowShort and srsiD < srsiLowShort : srsiK > srsiLowShort and srsiK < srsiHighShort
 
 // Bollinger Bands
 basis = ta.sma(bbSource, bbLength)
@@ -374,8 +379,8 @@ rsiSignalShort		= not includeRSIShort or (rsiHighShort > rsi and rsi > rsiLowSho
 stochSignalLong		= not includeStochLong or ((not useStochRangeLong or stochInRangeLong) and (not stochKAboveD or k > d))
 stochSignalShort	= not includeStochShort or ((not useStochRangeShort or stochInRangeShort) and (not stochKBelowD or k < d))
 
-srsiSignalLong      = not includeSRSILong or (srsiK > srsiLowLong and srsiK < srsiHighLong)
-srsiSignalShort     = not includeSRSIShort or (srsiK > srsiLowShort and srsiK < srsiHighShort)
+srsiSignalLong      = not includeSRSILong or srsiInRangeLong
+srsiSignalShort     = not includeSRSIShort or srsiInRangeLong
 
 bbSignalLong        = not includeBBLong or ((not includBBBiasLong or longBias) and (not includeBBTestLong or bbLowTest))
 bbSignalShort       = not includeBBShort or ((not includBBBiasShort or shortBias) and (not includeBBTestShort or bbUpTest))
