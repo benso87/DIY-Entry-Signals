@@ -13,14 +13,16 @@ noColor = color.new(color.white, transp=100)
 // Inputs
 
 // Signal Types
-includeLong		= input.bool (true, title='Long', inline='1', group='Signal Types')
-includeShort	= input.bool (true, title='Short', inline='2', group='Signal Types')
-onlyConfirmed   = input.bool (true, title='Only Confirmed Candles', inline='3', group='Signal Types')
-useSigCheck     = input.bool (false, title='No More Signals For # Bars', inline='5', group='Signal Types')
-sigCheckBars    = input.int  (10, title='', minval=1, maxval=50, inline='5', group='Signal Types')
+includeLong		= input.bool   (true, title='Long', inline='1', group='Signal Types')
+includeShort	= input.bool   (true, title='Short', inline='2', group='Signal Types')
+onlyConfirmed   = input.bool   (true, title='Only Confirmed Candles', inline='3', group='Signal Types')
+useSigCheck     = input.bool   (false, title='No More Signals For # Bars', inline='5', group='Signal Types')
+sigCheckBars    = input.int    (10, title='', minval=1, maxval=50, inline='5', group='Signal Types')
+plotType        = input.string ('Shape', title='Signal Marker', options=['Shape', 'Dot', 'Bar'], group='Signal Types')
+barColorLong    = input.color  (#0bff00, title='Long Bar Color', group='Signal Types')
+barColorShort   = input.color  (#ff0014, title='Short Bar Color', group='Signal Types')
 
 // Price
-
 priceSource = input.source(close, title='Price Source', group='Price')
 
 // Moving Averages
@@ -117,9 +119,9 @@ offSat      = input.bool (true, title='Saturday', group='Days Off')
 
 // Time Off
 useTimeOff = input.bool (false, title='Time Off', group='Time Off')
-startTimeH = input.int  (12, title='Start (UTC)', minval=0, maxval=23, group='Time Off', inline='start')
+startTimeH = input.int  (5, title='Start (UTC)', minval=0, maxval=23, group='Time Off', inline='start')
 startTimeM = input.int  (0, title=':', minval=0, maxval=59, group='Time Off', inline='start')
-stopTimeH  = input.int  (4, title='Stop (UTC)', minval=0, maxval=23, group='Time Off', inline='stop')
+stopTimeH  = input.int  (13, title='Stop (UTC)', minval=0, maxval=23, group='Time Off', inline='stop')
 stopTimeM  = input.int  (0, title=':', minval=0, maxval=59, group='Time Off', inline='stop')
 
 // Long Conditions
@@ -129,6 +131,8 @@ priceMaLongStr   	= input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'M
 i_ma1Above2   		= input.bool    (false, title='MA 1 > MA 2', inline='ma above 1', group='Long Conditions')
 i_ma2Above3   		= input.bool    (false, title='MA 2 > MA 3', inline='ma above 2', group='Long Conditions')
 i_ma3Above4   		= input.bool    (false, title='MA 3 > MA 4', inline='ma above 3', group='Long Conditions')
+useMATestLong       = input.bool    (false, title='MA Test', inline='ma test', group='Long Conditions', tooltip='Experimental. This will check to see if the candle touches the moving average and closes above it, or if the previous candle opened above and closed below, and the signal candle closes back above.')
+i_maTestedLong      = input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='ma test', group='Long Conditions')
 includeRSILong  	= input.bool    (false, title='RSI', inline='rsi', group='Long Conditions')
 rsiLowLong   		= input.float   (38, title='Above', inline='rsi', group='Long Conditions')
 rsiHighLong   		= input.float   (62, title='Below', inline='rsi', group='Long Conditions')
@@ -163,6 +167,8 @@ priceMaShortStr   	= input.string  ('MA 1', title='', options=['MA 1', 'MA 2', '
 i_ma1Below2   		= input.bool    (false, title='MA 1 < MA 2', inline='ma below 1', group='Short Conditions')
 i_ma2Below3   		= input.bool    (false, title='MA 2 < MA 3', inline='ma below 2', group='Short Conditions')
 i_ma3Below4   		= input.bool    (false, title='MA 3 < MA 4', inline='ma below 3', group='Short Conditions')
+useMATestShort      = input.bool    (false, title='MA Test', inline='ma test', group='Short Conditions', tooltip='Experimental. This will check to see if the candle touches the moving average and closes below it, or if the previous candle opened below and closed above, and the signal candle closes back below.')
+i_maTestedShort     = input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='ma test', group='Short Conditions')
 includeRSIShort  	= input.bool    (false, title='RSI', inline='rsi', group='Short Conditions')
 rsiLowShort   		= input.float   (38, title='Above', inline='rsi', group='Short Conditions')
 rsiHighShort  		= input.float   (62, title='Below', inline='rsi', group='Short Conditions')
@@ -248,6 +254,13 @@ cross3Up = maCrosses and useCross3 ? ta.crossover(cross3ma1, cross3ma2) : false
 cross3Down = maCrosses and useCross3 ? ta.crossunder(cross3ma1, cross3ma2) : false
 
 crossColor = cross3Up ? cross3Color1 : cross3Down ? cross3Color2 : cross2Up ? cross2Color1 : cross2Down ? cross2Color2 : cross1Up ? cross1Color1 : cross1Down ? cross1Color2 : na
+
+// Moving average test
+maTestedLong = f_convertMA(i_maTestedLong)
+maTestedShort = f_convertMA(i_maTestedShort)
+
+maTestLong = (low <= maTestedLong and close >= maTestedLong) or (open[1] > maTestedLong[1] and close[1] <= maTestedLong[1] and close > maTestedLong)
+maTestShort = (high >= maTestedShort and close <= maTestedShort) or (open[1] < maTestedShort[1] and close[1] >= maTestedShort[1] and close < maTestedShort)
 
 // Price check conversions
 priceMaLong = f_convertMA(priceMaLongStr)
@@ -370,8 +383,8 @@ timeOff = useTimeOff and timeOffSession
 priceSignalLong     = not usePriceLong or (priceLongAB == 'Above' and priceSource >= priceMaLong) or (priceLongAB == 'Below' and priceSource <= priceMaLong)
 priceSignalShort    = not usePriceShort or (priceShortAB == 'Above' and priceSource >= priceMaShort) or (priceShortAB == 'Below' and priceSource <= priceMaShort)
 
-maSignalLong 		= (not i_ma1Above2 or ma1Above2) and (not i_ma2Above3 or ma2Above3) and (not i_ma3Above4 or ma3Above4)
-maSignalShort		= (not i_ma1Below2 or ma2Above1) and (not i_ma2Below3 or ma3Above2) and (not i_ma3Below4 or ma4Above3)
+maSignalLong 		= (not i_ma1Above2 or ma1Above2) and (not i_ma2Above3 or ma2Above3) and (not i_ma3Above4 or ma3Above4) and (not useMATestLong or maTestLong)
+maSignalShort		= (not i_ma1Below2 or ma2Above1) and (not i_ma2Below3 or ma3Above2) and (not i_ma3Below4 or ma4Above3) and (not useMATestShort or maTestShort)
 
 rsiSignalLong		= not includeRSILong or (rsiHighLong > rsi and rsi > rsiLowLong) 
 rsiSignalShort		= not includeRSIShort or (rsiHighShort > rsi and rsi > rsiLowShort)
@@ -432,9 +445,12 @@ p1 = plot(plotBB ? upper : na, title='Upper', color=color.blue, linewidth=2)
 p2 = plot(plotBB ? lower : na, title='Lower', color=color.blue, linewidth=2)
 fill(p1, p2, title='BB Background', color=fillColor)
 
-//Signals
-plotshape(longSignal,  title='Long',  location=location.belowbar, style=shape.triangleup,   size=size.small, color=color.new(color.blue, transp=0))
-plotshape(shortSignal, title='Short', location=location.abovebar, style=shape.triangledown, size=size.small, color=color.new(color.red,  transp=0))
+// Signals
+plotshape(plotType == 'Shape' ? longSignal : na,  title='Long',  location=location.belowbar, style=shape.triangleup, size=size.small, color=color.blue)
+plotchar(plotType == 'Dot'  ? longSignal : na, title='Long', location=location.belowbar, char='•', color=color.blue)
+plotshape(plotType == 'Shape' ? shortSignal : na, title='Short', location=location.abovebar, style=shape.triangledown, size=size.small, color=color.red)
+plotchar(plotType == 'Dot' ? shortSignal : na, title='Short', location=location.abovebar, char='•', color=color.red)
+barcolor(plotType == 'Bar' and longSignal ? barColorLong : plotType == 'Bar' and shortSignal ? barColorShort : na)
 
 
 //////////////////////////////////////////////////////////////
