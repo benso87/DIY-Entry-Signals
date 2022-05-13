@@ -18,9 +18,9 @@ includeShort	= input.bool (true, title='Short', inline='2', group='Signal Types'
 onlyConfirmed   = input.bool (true, title='Only Confirmed Candles', inline='3', group='Signal Types')
 useSigCheck     = input.bool (false, title='No More Signals For # Bars', inline='5', group='Signal Types')
 sigCheckBars    = input.int  (10, title='', minval=1, maxval=50, inline='5', group='Signal Types')
+plotType        = input.string('Shape', title='Signal Marker', options=['Shape', 'Dot'], group='Signal Types')
 
 // Price
-
 priceSource = input.source(close, title='Price Source', group='Price')
 
 // Moving Averages
@@ -262,15 +262,15 @@ rsi = down == 0 ? 100 : up == 0 ? 0 : 100 - (100 / (1 + up / down))
 k = ta.sma(ta.stoch(stochSource, high, low, periodK), smoothK)
 d = ta.sma(k, periodD)
 
-stochInRangeLong = kdSig ? stochHighLong > k and k > stochLowLong and stochHighLong > d and d > stochLowLong : stochHighLong > k and k > stochLowLong
-stochInRangeShort = kdSig? stochHighShort > k and k > stochLowShort and stochHighShort > d and d > stochLowShort : stochHighShort > k and k > stochLowShort
+stochInRangeLong = kdSig ? stochHighLong >= k and k >= stochLowLong and stochHighLong >= d and d >= stochLowLong : stochHighLong >= k and k >= stochLowLong
+stochInRangeShort = kdSig ? stochHighShort >= k and k >= stochLowShort and stochHighShort >= d and d >= stochLowShort : stochHighShort >= k and k >= stochLowShort
 
 // Stoch RSI
 srsiK = ta.sma(ta.stoch(rsi, rsi, rsi, srsiLength), srsiSmoothK)
-srsiD = ta.sma(k, srsiSmoothD)
+srsiD = ta.sma(srsiK, srsiSmoothD)
 
-srsiInRangeLong = srsiKDSig ? srsiK > srsiLowLong and srsiK < srsiHighLong and srsiD > srsiLowLong and srsiD < srsiLowLong : srsiK > srsiLowLong and srsiK < srsiHighLong
-srsiInRangeShort = srsiKDSig ? srsiK > srsiLowShort and srsiK < srsiHighShort and srsiD > srsiLowShort and srsiD < srsiLowShort : srsiK > srsiLowShort and srsiK < srsiHighShort
+srsiInRangeLong = srsiKDSig ? srsiHighLong >= srsiK and srsiK >= srsiLowLong and srsiHighLong >= srsiD and srsiD >= srsiLowLong : srsiHighLong >= srsiK and srsiK >= srsiLowLong
+srsiInRangeShort = srsiKDSig ? srsiHighShort >= srsiK and srsiK >= srsiLowShort and srsiHighShort >= srsiD and srsiD >= srsiLowShort : srsiHighShort >= srsiK and srsiK >= srsiLowShort
 
 // Bollinger Bands
 basis = ta.sma(bbSource, bbLength)
@@ -380,7 +380,7 @@ stochSignalLong		= not includeStochLong or ((not useStochRangeLong or stochInRan
 stochSignalShort	= not includeStochShort or ((not useStochRangeShort or stochInRangeShort) and (not stochKBelowD or k < d))
 
 srsiSignalLong      = not includeSRSILong or srsiInRangeLong
-srsiSignalShort     = not includeSRSIShort or srsiInRangeLong
+srsiSignalShort     = not includeSRSIShort or srsiInRangeShort
 
 bbSignalLong        = not includeBBLong or ((not includBBBiasLong or longBias) and (not includeBBTestLong or bbLowTest))
 bbSignalShort       = not includeBBShort or ((not includBBBiasShort or shortBias) and (not includeBBTestShort or bbUpTest))
@@ -432,9 +432,11 @@ p1 = plot(plotBB ? upper : na, title='Upper', color=color.blue, linewidth=2)
 p2 = plot(plotBB ? lower : na, title='Lower', color=color.blue, linewidth=2)
 fill(p1, p2, title='BB Background', color=fillColor)
 
-//Signals
-plotshape(longSignal,  title='Long',  location=location.belowbar, style=shape.triangleup,   size=size.small, color=color.new(color.blue, transp=0))
-plotshape(shortSignal, title='Short', location=location.abovebar, style=shape.triangledown, size=size.small, color=color.new(color.red,  transp=0))
+// Signals
+plotshape(plotType == 'Shape' ? longSignal : na,  title='Long',  location=location.belowbar, style=shape.triangleup, size=size.auto, color=color.blue)
+plotchar(plotType == 'Dot'  ? longSignal : na, title='Long', location=location.belowbar, char='•', color=color.blue)
+plotshape(plotType == 'Shape' ? shortSignal : na, title='Short', location=location.abovebar, style=shape.triangledown, size=size.small, color=color.red)
+plotchar(plotType == 'Dot' ? shortSignal : na, title='Short', location=location.abovebar, char='•', color=color.red)
 
 
 //////////////////////////////////////////////////////////////
@@ -449,3 +451,7 @@ alertcondition(cross2Up or cross2Down, title='MA Pair 2 Cross', message='DIY MA 
 alertcondition(cross3Up or cross3Down, title='MA Pair 3 Cross', message='DIY MA Cross Signal')
 
 //////////////////////////////////////////////////////////////
+
+// Testing
+// plotchar(srsiK, 'k', char='.', color=noColor)
+// plotchar(srsiD, 'd', char='.', color=noColor)
