@@ -6,7 +6,7 @@
 // Credit to:
 // The_Caretaker for BBWP and PMARP indicators 
 //
-indicator(title='DIY Entry Signals', shorttitle='DIY Signals', format=format.price, precision=2, timeframe='', timeframe_gaps=true, overlay=true)
+indicator(title='DIY Entry Signals', shorttitle='DIY Signals', format=format.price, precision=2, timeframe='', timeframe_gaps=true, overlay=true, max_bars_back=500)
 
 noColor = color.new(color.white, transp=100)
 //////////////////////////////////////////////////////////////
