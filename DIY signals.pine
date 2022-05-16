@@ -6,7 +6,7 @@
 // Credit to:
 // The_Caretaker for BBWP and PMARP indicators 
 //
-indicator(title='DIY Entry Signals', shorttitle='DIY Signals', format=format.price, precision=2, timeframe='', timeframe_gaps=true, overlay=true)
+indicator(title='DIY Entry Signals', shorttitle='DIY Signals', format=format.price, precision=2, timeframe='', timeframe_gaps=true, overlay=true, max_bars_back=500)
 
 noColor = color.new(color.white, transp=100)
 //////////////////////////////////////////////////////////////
@@ -131,11 +131,22 @@ priceMaLongStr   	= input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'M
 i_ma1Above2   		= input.bool    (false, title='MA 1 > MA 2', inline='ma above 1', group='Long Conditions')
 i_ma2Above3   		= input.bool    (false, title='MA 2 > MA 3', inline='ma above 2', group='Long Conditions')
 i_ma3Above4   		= input.bool    (false, title='MA 3 > MA 4', inline='ma above 3', group='Long Conditions')
+useCross1UpLong     = input.bool    (false, title='Price Crosses Above MA 1', inline='cross up', group='Long Conditions')
+useCross2UpLong     = input.bool    (false, title='MA 2', inline='cross up', group='Long Conditions')
+useCross3UpLong     = input.bool    (false, title='MA 3', inline='cross up', group='Long Conditions')
+useCross4UpLong     = input.bool    (false, title='MA 4', inline='cross up', group='Long Conditions')
+useCross1DnLong     = input.bool    (false, title='Price Crosses Below MA 1', inline='cross dn', group='Long Conditions')
+useCross2DnLong     = input.bool    (false, title='MA 2', inline='cross dn', group='Long Conditions')
+useCross3DnLong     = input.bool    (false, title='MA 3', inline='cross dn', group='Long Conditions')
+useCross4DnLong     = input.bool    (false, title='MA 4', inline='cross dn', group='Long Conditions')
 useMATestLong       = input.bool    (false, title='MA Test (beta)', inline='ma test', group='Long Conditions', tooltip='Experimental. This will check to see if the candle touches the moving average and closes above it, or if the previous candle opened above and closed below, and the signal candle closes back above.')
 i_maTestedLong      = input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='ma test', group='Long Conditions')
 includeRSILong  	= input.bool    (false, title='RSI', inline='rsi', group='Long Conditions')
 rsiLowLong   		= input.float   (38, title='Above', inline='rsi', group='Long Conditions')
 rsiHighLong   		= input.float   (62, title='Below', inline='rsi', group='Long Conditions')
+useRsiCrossLong     = input.bool    (false, title='RSI cross', inline='rsi cross', group='Long Conditions')
+rsiCrossDirLong     = input.string  ('Above', title='', options=['Above', 'Below'], inline='rsi cross', group='Long Conditions')
+rsiCrossLevelLong   = input.float   (50, title='', minval=0, maxval=100, inline='rsi cross', group='Long Conditions')
 includeStochLong 	= input.bool    (false, title='Stoch', inline='stoch', group='Long Conditions')
 stochKAboveD  		= input.bool    (false, title='K > D', inline='stoch', group='Long Conditions')
 useStochRangeLong 	= input.bool    (false, title='Stoch In Range?',inline='stoch 2', group='Long Conditions')
@@ -167,11 +178,22 @@ priceMaShortStr   	= input.string  ('MA 1', title='', options=['MA 1', 'MA 2', '
 i_ma1Below2   		= input.bool    (false, title='MA 1 < MA 2', inline='ma below 1', group='Short Conditions')
 i_ma2Below3   		= input.bool    (false, title='MA 2 < MA 3', inline='ma below 2', group='Short Conditions')
 i_ma3Below4   		= input.bool    (false, title='MA 3 < MA 4', inline='ma below 3', group='Short Conditions')
+useCross1UpShort    = input.bool    (false, title='Price Crosses Above MA 1', inline='cross up', group='Short Conditions')
+useCross2UpShort    = input.bool    (false, title='MA 2', inline='cross up', group='Short Conditions')
+useCross3UpShort    = input.bool    (false, title='MA 3', inline='cross up', group='Short Conditions')
+useCross4UpShort    = input.bool    (false, title='MA 4', inline='cross up', group='Short Conditions')
+useCross1DnShort    = input.bool    (false, title='Price Crosses Below MA 1', inline='cross dn', group='Short Conditions')
+useCross2DnShort    = input.bool    (false, title='MA 2', inline='cross dn', group='Short Conditions')
+useCross3DnShort    = input.bool    (false, title='MA 3', inline='cross dn', group='Short Conditions')
+useCross4DnShort    = input.bool    (false, title='MA 4', inline='cross dn', group='Short Conditions')
 useMATestShort      = input.bool    (false, title='MA Test (beta)', inline='ma test', group='Short Conditions', tooltip='Experimental. This will check to see if the candle touches the moving average and closes below it, or if the previous candle opened below and closed above, and the signal candle closes back below.')
 i_maTestedShort     = input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='ma test', group='Short Conditions')
 includeRSIShort  	= input.bool    (false, title='RSI', inline='rsi', group='Short Conditions')
 rsiLowShort   		= input.float   (38, title='Above', inline='rsi', group='Short Conditions')
 rsiHighShort  		= input.float   (62, title='Below', inline='rsi', group='Short Conditions')
+useRsiCrossShort    = input.bool    (false, title='RSI cross', inline='rsi cross', group='Short Conditions')
+rsiCrossDirShort    = input.string  ('Below', title='', options=['Above', 'Below'], inline='rsi cross', group='Short Conditions')
+rsiCrossLevelShort  = input.float   (50, title='', minval=0, maxval=100, inline='rsi cross', group='Short Conditions')
 includeStochShort 	= input.bool    (false, title='Stoch', inline='stoch', group='Short Conditions')
 stochKBelowD  		= input.bool    (false, title='K < D', inline='stoch', group='Short Conditions')
 useStochRangeShort  = input.bool    (false, title='Stoch In Range?',inline='stoch 2', group='Short Conditions')
@@ -238,6 +260,20 @@ ma4Above1 	= ma4 > ma1
 ma4Above2 	= ma4 > ma2
 ma4Above3 	= ma4 > ma3
 
+// Price crossing moving average checks
+pCrossUp1 = ta.crossover(close, ma1)
+pCrossUp2 = ta.crossover(close, ma2)
+pCrossUp3 = ta.crossover(close, ma3)
+pCrossUp4 = ta.crossover(close, ma4)
+
+pCrossDn1 = ta.crossunder(close, ma1)
+pCrossDn2 = ta.crossunder(close, ma2)
+pCrossDn3 = ta.crossunder(close, ma3)
+pCrossDn4 = ta.crossunder(close, ma4)
+
+pCrossLong = (not useCross1UpLong or pCrossUp1) and (not useCross2UpLong or pCrossUp2) and (not useCross3UpLong or pCrossUp3) and (not useCross4UpLong or pCrossUp4) and (not useCross1DnLong or pCrossDn1) and (not useCross2DnLong or pCrossDn2) and (not useCross3DnLong or pCrossDn3) and (not useCross4DnLong or pCrossDn4)
+pCrossShort = (not useCross1UpShort or pCrossUp1) and (not useCross2UpShort or pCrossUp2) and (not useCross3UpShort or pCrossUp3) and (not useCross4UpShort or pCrossUp4) and (not useCross1DnShort or pCrossDn1) and (not useCross2DnShort or pCrossDn2) and (not useCross3DnShort or pCrossDn3) and (not useCross4DnShort or pCrossDn4)
+
 // Moving average crossover checks
 cross1ma1 = f_convertMA(cross1ma1Str)
 cross1ma2 = f_convertMA(cross1ma2Str)
@@ -270,6 +306,9 @@ priceMaShort = f_convertMA(priceMaShortStr)
 up = ta.rma(math.max(ta.change(rsiSource), 0), rsiPeriod)
 down = ta.rma(-math.min(ta.change(rsiSource), 0), rsiPeriod)
 rsi = down == 0 ? 100 : up == 0 ? 0 : 100 - (100 / (1 + up / down))
+
+rsiCrossLong = rsiCrossDirLong == 'Above' ? ta.crossover(rsi, rsiCrossLevelLong) : ta.crossunder(rsi, rsiCrossLevelLong)
+rsiCrossShort = rsiCrossDirShort == 'Above' ? ta.crossover(rsi, rsiCrossLevelShort) : ta.crossunder(rsi, rsiCrossLevelShort)
 
 // Stochastic
 k = ta.sma(ta.stoch(stochSource, high, low, periodK), smoothK)
@@ -383,11 +422,14 @@ timeOff = useTimeOff and timeOffSession
 priceSignalLong     = not usePriceLong or (priceLongAB == 'Above' and priceSource >= priceMaLong) or (priceLongAB == 'Below' and priceSource <= priceMaLong)
 priceSignalShort    = not usePriceShort or (priceShortAB == 'Above' and priceSource >= priceMaShort) or (priceShortAB == 'Below' and priceSource <= priceMaShort)
 
-maSignalLong 		= (not i_ma1Above2 or ma1Above2) and (not i_ma2Above3 or ma2Above3) and (not i_ma3Above4 or ma3Above4) and (not useMATestLong or maTestLong)
-maSignalShort		= (not i_ma1Below2 or ma2Above1) and (not i_ma2Below3 or ma3Above2) and (not i_ma3Below4 or ma4Above3) and (not useMATestShort or maTestShort)
+maSignalLong 		= (not i_ma1Above2 or ma1Above2) and (not i_ma2Above3 or ma2Above3) and (not i_ma3Above4 or ma3Above4) and (not useMATestLong or maTestLong) and pCrossLong
+maSignalShort		= (not i_ma1Below2 or ma2Above1) and (not i_ma2Below3 or ma3Above2) and (not i_ma3Below4 or ma4Above3) and (not useMATestShort or maTestShort) and pCrossShort
 
-rsiSignalLong		= not includeRSILong or (rsiHighLong > rsi and rsi > rsiLowLong) 
+rsiSignalLong		= not includeRSILong or (rsiHighLong > rsi and rsi > rsiLowLong)
 rsiSignalShort		= not includeRSIShort or (rsiHighShort > rsi and rsi > rsiLowShort)
+
+rsiCrossSignalLong  = not useRsiCrossLong or rsiCrossLong
+rsiCrossSignalShort = not useRsiCrossShort or rsiCrossShort 
 
 stochSignalLong		= not includeStochLong or ((not useStochRangeLong or stochInRangeLong) and (not stochKAboveD or k > d))
 stochSignalShort	= not includeStochShort or ((not useStochRangeShort or stochInRangeShort) and (not stochKBelowD or k < d))
@@ -413,8 +455,8 @@ adxSignalShort      = not useADXShort or (adxABShort == 'Above' and adx >= adxTh
 adxDirSignalLong	= not useADXDirLong or (adxDirLong == 'Rising' and adx >= adx[1]) or (adxDirLong == 'Falling' and adx <= adx[1])
 adxDirSignalShort	= not useADXDirShort or (adxDirShort == 'Rising' and adx >= adx[1]) or (adxDirShort == 'Falling' and adx <= adx[1])
 
-longSignal 			= includeLong and not dayOff and not timeOff and (not useSigCheck or not sigCheckL) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalLong and maSignalLong and rsiSignalLong and stochSignalLong and srsiSignalLong and bbSignalLong and bbwpSignalLong and pmarpSignalLong and dmiSignalLong and adxSignalLong and adxDirSignalLong
-shortSignal 		= includeShort and not dayOff and not timeOff and (not useSigCheck or not sigCheckS) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalShort and maSignalShort and rsiSignalShort and stochSignalShort and srsiSignalShort and bbSignalShort and bbwpSignalShort and pmarpSignalShort and dmiSignalShort and adxSignalShort and adxDirSignalShort
+longSignal 			= includeLong and not dayOff and not timeOff and (not useSigCheck or not sigCheckL) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalLong and maSignalLong and rsiSignalLong and rsiCrossSignalLong and stochSignalLong and srsiSignalLong and bbSignalLong and bbwpSignalLong and pmarpSignalLong and dmiSignalLong and adxSignalLong and adxDirSignalLong
+shortSignal 		= includeShort and not dayOff and not timeOff and (not useSigCheck or not sigCheckS) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalShort and maSignalShort and rsiSignalShort and rsiCrossSignalShort and stochSignalShort and srsiSignalShort and bbSignalShort and bbwpSignalShort and pmarpSignalShort and dmiSignalShort and adxSignalShort and adxDirSignalShort
 
 // Check if a new signal should not be plotted
 
