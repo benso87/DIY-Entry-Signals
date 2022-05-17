@@ -27,40 +27,56 @@ priceSource = input.source(close, title='Price Source', group='Price')
 
 // Moving Averages
 maSource    = input.source  (close, title='Source', inline='source', group='Moving Averages')
-includeMA1	= input.bool	(true, title='', inline='MA 1', group='Moving Averages')
+includeMA1	= input.bool	(false, title='', inline='MA 1', group='Moving Averages')
 ma1Color 	= input.color	(#ffeb3b, title='MA 1', inline='MA 1', group='Moving Averages')
 ma1Length 	= input.int		(21, title='Length', minval=1, inline='MA 1', group='Moving Averages')
 ma1Type 	= input.string	('EMA', title='Type', options=['SMA','EMA'], inline='MA 1', group='Moving Averages')
-includeMA2	= input.bool	(true, title='', inline='MA 2', group='Moving Averages')
+includeMA2	= input.bool	(false, title='', inline='MA 2', group='Moving Averages')
 ma2Color 	= input.color	(#00e676, title='MA 2', inline='MA 2', group='Moving Averages')
 ma2Length 	= input.int		(55, title='Length', minval=1, inline='MA 2', group='Moving Averages')
 ma2Type 	= input.string	('EMA', title='Type', options=['SMA','EMA'], inline='MA 2', group='Moving Averages')
-includeMA3	= input.bool	(true, title='', inline='MA 3', group='Moving Averages')
+includeMA3	= input.bool	(false, title='', inline='MA 3', group='Moving Averages')
 ma3Color 	= input.color	(#00bcd4, title='MA 3', inline='MA 3', group='Moving Averages')
 ma3Length 	= input.int		(100, title='Length', minval=1, inline='MA 3', group='Moving Averages')
 ma3Type 	= input.string	('EMA', title='Type', options=['SMA','EMA'], inline='MA 3', group='Moving Averages')
-includeMA4	= input.bool	(true, title='', inline='MA 4', group='Moving Averages')
+includeMA4	= input.bool	(false, title='', inline='MA 4', group='Moving Averages')
 ma4Color 	= input.color	(#e040fb, title='MA 4', inline='MA 4', group='Moving Averages')
 ma4Length 	= input.int		(200, title='Length', minval=1, inline='MA 4', group='Moving Averages')
 ma4Type 	= input.string	('EMA', title='Type', options=['SMA','EMA'], inline='MA 4', group='Moving Averages')
+includeMA5	= input.bool	(false, title='', inline='MA 5', group='Moving Averages')
+ma5Color 	= input.color	(color.red, title='MA 5', inline='MA 5', group='Moving Averages')
+ma5Length 	= input.int		(300, title='Length', minval=1, inline='MA 5', group='Moving Averages')
+ma5Type 	= input.string	('EMA', title='Type', options=['SMA','EMA'], inline='MA 5', group='Moving Averages')
+includeMA6	= input.bool	(false, title='', inline='MA 6', group='Moving Averages')
+ma6Color 	= input.color	(color.blue, title='MA 6', inline='MA 6', group='Moving Averages')
+ma6Length 	= input.int		(400, title='Length', minval=1, inline='MA 6', group='Moving Averages')
+ma6Type 	= input.string	('EMA', title='Type', options=['SMA','EMA'], inline='MA 6', group='Moving Averages')
+includeMA7	= input.bool	(false, title='', inline='MA 7', group='Moving Averages')
+ma7Color 	= input.color	(color.white, title='MA 7', inline='MA 7', group='Moving Averages')
+ma7Length 	= input.int		(500, title='Length', minval=1, inline='MA 7', group='Moving Averages')
+ma7Type 	= input.string	('EMA', title='Type', options=['SMA','EMA'], inline='MA 7', group='Moving Averages')
+includeMA8	= input.bool	(false, title='', inline='MA 8', group='Moving Averages')
+ma8Color 	= input.color	(color.orange, title='MA 8', inline='MA 8', group='Moving Averages')
+ma8Length 	= input.int		(600, title='Length', minval=1, inline='MA 8', group='Moving Averages')
+ma8Type 	= input.string	('EMA', title='Type', options=['SMA','EMA'], inline='MA 8', group='Moving Averages')
 
 // Moving Average Crosses 
 maCrosses    = input.bool   (false, title='Highlight moving average crosses', group='Moving Average Crosses', inline='1')
 useCross1    = input.bool   (false, title='Pair 1', group='Moving Average Crosses', inline='pair1')
 cross1Color1 = input.color  (color.new(color.silver, transp=50), title='', group='Moving Average Crosses', inline='pair1')
 cross1Color2 = input.color  (color.new(color.purple, transp=50), title='', group='Moving Average Crosses', inline='pair1')
-cross1ma1Str = input.string ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], group='Moving Average Crosses', inline='pair1')
-cross1ma2Str = input.string ('MA 2', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], group='Moving Average Crosses', inline='pair1')
+cross1ma1Str = input.string ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4', 'MA 5', 'MA 6', 'MA 7', 'MA 8'], group='Moving Average Crosses', inline='pair1')
+cross1ma2Str = input.string ('MA 2', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4', 'MA 5', 'MA 6', 'MA 7', 'MA 8'], group='Moving Average Crosses', inline='pair1')
 useCross2    = input.bool   (false, title='Pair 2', group='Moving Average Crosses', inline='pair2')
 cross2Color1 = input.color  (color.new(color.yellow, transp=50), title='', group='Moving Average Crosses', inline='pair2')
 cross2Color2 = input.color  (color.new(color.red, transp=50), title='', group='Moving Average Crosses', inline='pair2')
-cross2ma1Str = input.string ('MA 2', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], group='Moving Average Crosses', inline='pair2')
-cross2ma2Str = input.string ('MA 4', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], group='Moving Average Crosses', inline='pair2')
+cross2ma1Str = input.string ('MA 2', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4', 'MA 5', 'MA 6', 'MA 7', 'MA 8'], group='Moving Average Crosses', inline='pair2')
+cross2ma2Str = input.string ('MA 4', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4', 'MA 5', 'MA 6', 'MA 7', 'MA 8'], group='Moving Average Crosses', inline='pair2')
 useCross3    = input.bool   (false, title='Pair 3', group='Moving Average Crosses', inline='pair3')
 cross3Color1 = input.color  (color.new(color.blue, transp=50), title='', group='Moving Average Crosses', inline='pair3')
 cross3Color2 = input.color  (color.new(color.orange, transp=50), title='', group='Moving Average Crosses', inline='pair3')
-cross3ma1Str = input.string ('MA 3', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], group='Moving Average Crosses', inline='pair3')
-cross3ma2Str = input.string ('MA 4', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], group='Moving Average Crosses', inline='pair3')
+cross3ma1Str = input.string ('MA 3', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4', 'MA 5', 'MA 6', 'MA 7', 'MA 8'], group='Moving Average Crosses', inline='pair3')
+cross3ma2Str = input.string ('MA 4', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4', 'MA 5', 'MA 6', 'MA 7', 'MA 8'], group='Moving Average Crosses', inline='pair3')
 
 // RSI
 rsiSource = input.source (close, title='Source', group='RSI')
@@ -83,7 +99,7 @@ srsiKDSig   = input.bool  (false, title='K & D', group='Stochastic RSI', tooltip
 bbSource    = input.source (close, title='Source', group='Bollinger Bands')
 bbLength    = input.int    (20, minval=1, group='Bollinger Bands')
 bbMult      = input.float  (2.0, minval=0.001, maxval=50, title="StdDev", group='Bollinger Bands')
-bbBiasMAStr = input.string ('MA 4', title='Moving Average for Bias', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], group='Bollinger Bands', tooltip='Bias is determined by the BB midline being above or below the chosen moving average.')
+bbBiasMAStr = input.string ('MA 4', title='Moving Average for Bias', options=['MA 1', 'MA 2', 'MA 3', 'MA 4', 'MA 5', 'MA 6', 'MA 7', 'MA 8'], group='Bollinger Bands', tooltip='Bias is determined by the BB midline being above or below the chosen moving average.')
 plotBB      = input.bool   (false, title='Plot', group='Bollinger Bands')
 bbFill      = input.color  (noColor, title='Fill Color', group='Bollinger Bands')
 biasFill    = input.bool   (false, title='Color Based on Bias', group='Bollinger Bands')
@@ -125,22 +141,34 @@ stopTimeH  = input.int  (13, title='Stop (UTC)', minval=0, maxval=23, group='Tim
 stopTimeM  = input.int  (0, title=':', minval=0, maxval=59, group='Time Off', inline='stop')
 
 // Long Conditions
-usePriceLong    	= input.bool    (true, title='Price', inline='price', group='Long Conditions')
+usePriceLong    	= input.bool    (false, title='Price', inline='price', group='Long Conditions')
 priceLongAB     	= input.string  ('Above', title='', options=['Above', 'Below'], inline='price', group='Long Conditions')
 priceMaLongStr   	= input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='price', group='Long Conditions')
 i_ma1Above2   		= input.bool    (false, title='MA 1 > MA 2', inline='ma above 1', group='Long Conditions')
 i_ma2Above3   		= input.bool    (false, title='MA 2 > MA 3', inline='ma above 2', group='Long Conditions')
 i_ma3Above4   		= input.bool    (false, title='MA 3 > MA 4', inline='ma above 3', group='Long Conditions')
-useCross1UpLong     = input.bool    (false, title='Price Crosses Above MA 1', inline='cross up', group='Long Conditions')
+i_ma4Above5   		= input.bool    (false, title='MA 4 > MA 5', inline='ma above 4', group='Long Conditions')
+i_ma5Above6   		= input.bool    (false, title='MA 5 > MA 6', inline='ma above 5', group='Long Conditions')
+i_ma6Above7   		= input.bool    (false, title='MA 6 > MA 7', inline='ma above 6', group='Long Conditions')
+i_ma7Above8   		= input.bool    (false, title='MA 7 > MA 8', inline='ma above 7', group='Long Conditions')
+useCross1UpLong     = input.bool    (false, title='Price Cross Up: MA 1', inline='cross up', group='Long Conditions')
 useCross2UpLong     = input.bool    (false, title='MA 2', inline='cross up', group='Long Conditions')
 useCross3UpLong     = input.bool    (false, title='MA 3', inline='cross up', group='Long Conditions')
 useCross4UpLong     = input.bool    (false, title='MA 4', inline='cross up', group='Long Conditions')
-useCross1DnLong     = input.bool    (false, title='Price Crosses Below MA 1', inline='cross dn', group='Long Conditions')
+useCross5UpLong     = input.bool    (false, title='MA 5', inline='cross up', group='Long Conditions')
+useCross6UpLong     = input.bool    (false, title='MA 6', inline='cross up', group='Long Conditions')
+useCross7UpLong     = input.bool    (false, title='MA 7', inline='cross up', group='Long Conditions')
+useCross8UpLong     = input.bool    (false, title='MA 8', inline='cross up', group='Long Conditions')
+useCross1DnLong     = input.bool    (false, title='Price Cross Down: MA 1', inline='cross dn', group='Long Conditions')
 useCross2DnLong     = input.bool    (false, title='MA 2', inline='cross dn', group='Long Conditions')
 useCross3DnLong     = input.bool    (false, title='MA 3', inline='cross dn', group='Long Conditions')
 useCross4DnLong     = input.bool    (false, title='MA 4', inline='cross dn', group='Long Conditions')
+useCross5DnLong     = input.bool    (false, title='MA 5', inline='cross dn', group='Long Conditions')
+useCross6DnLong     = input.bool    (false, title='MA 6', inline='cross dn', group='Long Conditions')
+useCross7DnLong     = input.bool    (false, title='MA 7', inline='cross dn', group='Long Conditions')
+useCross8DnLong     = input.bool    (false, title='MA 8', inline='cross dn', group='Long Conditions')
 useMATestLong       = input.bool    (false, title='MA Test (beta)', inline='ma test', group='Long Conditions', tooltip='Experimental. This will check to see if the candle touches the moving average and closes above it, or if the previous candle opened above and closed below, and the signal candle closes back above.')
-i_maTestedLong      = input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='ma test', group='Long Conditions')
+i_maTestedLong      = input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4', 'MA 5', 'MA 6', 'MA 7', 'MA 8'], inline='ma test', group='Long Conditions')
 includeRSILong  	= input.bool    (false, title='RSI', inline='rsi', group='Long Conditions')
 rsiLowLong   		= input.float   (38, title='Above', inline='rsi', group='Long Conditions')
 rsiHighLong   		= input.float   (62, title='Below', inline='rsi', group='Long Conditions')
@@ -172,22 +200,34 @@ useADXDirLong		= input.bool    (false, title='ADX Direction', inline='adx 2', gr
 adxDirLong			= input.string  ('Rising', title='', options=['Rising', 'Falling'], inline='adx 2', group='Long Conditions')
 
 // Short Conditions
-usePriceShort    	= input.bool    (true, title='Price', inline='price', group='Short Conditions')
+usePriceShort    	= input.bool    (false, title='Price', inline='price', group='Short Conditions')
 priceShortAB    	= input.string  ('Above', title='', options=['Above', 'Below'], inline='price', group='Short Conditions')
 priceMaShortStr   	= input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='price', group='Short Conditions')
 i_ma1Below2   		= input.bool    (false, title='MA 1 < MA 2', inline='ma below 1', group='Short Conditions')
 i_ma2Below3   		= input.bool    (false, title='MA 2 < MA 3', inline='ma below 2', group='Short Conditions')
 i_ma3Below4   		= input.bool    (false, title='MA 3 < MA 4', inline='ma below 3', group='Short Conditions')
-useCross1UpShort    = input.bool    (false, title='Price Crosses Above MA 1', inline='cross up', group='Short Conditions')
-useCross2UpShort    = input.bool    (false, title='MA 2', inline='cross up', group='Short Conditions')
-useCross3UpShort    = input.bool    (false, title='MA 3', inline='cross up', group='Short Conditions')
-useCross4UpShort    = input.bool    (false, title='MA 4', inline='cross up', group='Short Conditions')
-useCross1DnShort    = input.bool    (false, title='Price Crosses Below MA 1', inline='cross dn', group='Short Conditions')
-useCross2DnShort    = input.bool    (false, title='MA 2', inline='cross dn', group='Short Conditions')
-useCross3DnShort    = input.bool    (false, title='MA 3', inline='cross dn', group='Short Conditions')
-useCross4DnShort    = input.bool    (false, title='MA 4', inline='cross dn', group='Short Conditions')
+i_ma4Below5   		= input.bool    (false, title='MA 4 < MA 5', inline='ma below 4', group='Short Conditions')
+i_ma5Below6   		= input.bool    (false, title='MA 5 < MA 6', inline='ma below 5', group='Short Conditions')
+i_ma6Below7   		= input.bool    (false, title='MA 6 < MA 7', inline='ma below 6', group='Short Conditions')
+i_ma7Below8   		= input.bool    (false, title='MA 7 < MA 8', inline='ma below 7', group='Short Conditions')
+useCross1UpShort     = input.bool    (false, title='Price Cross Up: MA 1', inline='cross up', group='Short Conditions')
+useCross2UpShort     = input.bool    (false, title='MA 2', inline='cross up', group='Short Conditions')
+useCross3UpShort     = input.bool    (false, title='MA 3', inline='cross up', group='Short Conditions')
+useCross4UpShort     = input.bool    (false, title='MA 4', inline='cross up', group='Short Conditions')
+useCross5UpShort     = input.bool    (false, title='MA 5', inline='cross up', group='Short Conditions')
+useCross6UpShort     = input.bool    (false, title='MA 6', inline='cross up', group='Short Conditions')
+useCross7UpShort     = input.bool    (false, title='MA 7', inline='cross up', group='Short Conditions')
+useCross8UpShort     = input.bool    (false, title='MA 8', inline='cross up', group='Short Conditions')
+useCross1DnShort     = input.bool    (false, title='Price Cross Down: MA 1', inline='cross dn', group='Short Conditions')
+useCross2DnShort     = input.bool    (false, title='MA 2', inline='cross dn', group='Short Conditions')
+useCross3DnShort     = input.bool    (false, title='MA 3', inline='cross dn', group='Short Conditions')
+useCross4DnShort     = input.bool    (false, title='MA 4', inline='cross dn', group='Short Conditions')
+useCross5DnShort     = input.bool    (false, title='MA 5', inline='cross dn', group='Short Conditions')
+useCross6DnShort     = input.bool    (false, title='MA 6', inline='cross dn', group='Short Conditions')
+useCross7DnShort     = input.bool    (false, title='MA 7', inline='cross dn', group='Short Conditions')
+useCross8DnShort     = input.bool    (false, title='MA 8', inline='cross dn', group='Short Conditions')
 useMATestShort      = input.bool    (false, title='MA Test (beta)', inline='ma test', group='Short Conditions', tooltip='Experimental. This will check to see if the candle touches the moving average and closes below it, or if the previous candle opened below and closed above, and the signal candle closes back below.')
-i_maTestedShort     = input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='ma test', group='Short Conditions')
+i_maTestedShort     = input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4', 'MA 5', 'MA 6', 'MA 7', 'MA 8'], inline='ma test', group='Short Conditions')
 includeRSIShort  	= input.bool    (false, title='RSI', inline='rsi', group='Short Conditions')
 rsiLowShort   		= input.float   (38, title='Above', inline='rsi', group='Short Conditions')
 rsiHighShort  		= input.float   (62, title='Below', inline='rsi', group='Short Conditions')
@@ -235,6 +275,10 @@ ma1 = f_ma(maSource, ma1Length, ma1Type)
 ma2 = f_ma(maSource, ma2Length, ma2Type)
 ma3 = f_ma(maSource, ma3Length, ma3Type)
 ma4 = f_ma(maSource, ma4Length, ma4Type)
+ma5 = f_ma(maSource, ma5Length, ma5Type)
+ma6 = f_ma(maSource, ma6Length, ma6Type)
+ma7 = f_ma(maSource, ma7Length, ma7Type)
+ma8 = f_ma(maSource, ma8Length, ma8Type)
 
 // Function to convert chosen MA to MA series
 f_convertMA (ma) =>
@@ -243,36 +287,96 @@ f_convertMA (ma) =>
         'MA 2' => ma2
         'MA 3' => ma3
         'MA 4' => ma4
+        'MA 5' => ma5
+        'MA 6' => ma6
+        'MA 7' => ma7
+        'MA 8' => ma8
 
 ma1Above2 	= ma1 > ma2
 ma1Above3 	= ma1 > ma3
 ma1Above4 	= ma1 > ma4
+ma1Above5 	= ma1 > ma5
+ma1Above6 	= ma1 > ma6
+ma1Above7 	= ma1 > ma7
+ma1Above8 	= ma1 > ma8
 
 ma2Above1 	= ma2 > ma1
 ma2Above3 	= ma2 > ma3
 ma2Above4 	= ma2 > ma4
+ma2Above5 	= ma2 > ma5
+ma2Above6 	= ma2 > ma6
+ma2Above7 	= ma2 > ma7
+ma2Above8 	= ma2 > ma8
 
 ma3Above1 	= ma3 > ma1
 ma3Above2 	= ma3 > ma2
 ma3Above4 	= ma3 > ma4
+ma3Above5 	= ma3 > ma5
+ma3Above6 	= ma3 > ma6
+ma3Above7 	= ma3 > ma7
+ma3Above8 	= ma3 > ma8
 
 ma4Above1 	= ma4 > ma1
 ma4Above2 	= ma4 > ma2
 ma4Above3 	= ma4 > ma3
+ma4Above5 	= ma4 > ma5
+ma4Above6 	= ma4 > ma6
+ma4Above7 	= ma4 > ma7
+ma4Above8 	= ma4 > ma8
+
+ma5Above1 	= ma5 > ma1
+ma5Above2 	= ma5 > ma2
+ma5Above3 	= ma5 > ma3
+ma5Above4 	= ma5 > ma4
+ma5Above6 	= ma5 > ma6
+ma5Above7 	= ma5 > ma7
+ma5Above8 	= ma5 > ma8
+
+ma6Above1 	= ma6 > ma1
+ma6Above2 	= ma6 > ma2
+ma6Above3 	= ma6 > ma3
+ma6Above4 	= ma6 > ma4
+ma6Above5 	= ma6 > ma5
+ma6Above7 	= ma6 > ma7
+ma6Above8 	= ma6 > ma8
+
+ma7Above1 	= ma7 > ma1
+ma7Above2 	= ma7 > ma2
+ma7Above3 	= ma7 > ma3
+ma7Above4 	= ma7 > ma4
+ma7Above5 	= ma7 > ma5
+ma7Above6 	= ma7 > ma6
+ma7Above8 	= ma7 > ma8
+
+ma8Above1 	= ma8 > ma1
+ma8Above2 	= ma8 > ma2
+ma8Above3 	= ma8 > ma3
+ma8Above4 	= ma8 > ma4
+ma8Above5 	= ma8 > ma5
+ma8Above6 	= ma8 > ma6
+ma8Above7 	= ma8 > ma7
 
 // Price crossing moving average checks
 pCrossUp1 = ta.crossover(close, ma1)
 pCrossUp2 = ta.crossover(close, ma2)
 pCrossUp3 = ta.crossover(close, ma3)
 pCrossUp4 = ta.crossover(close, ma4)
+pCrossUp5 = ta.crossover(close, ma5)
+pCrossUp6 = ta.crossover(close, ma6)
+pCrossUp7 = ta.crossover(close, ma7)
+pCrossUp8 = ta.crossover(close, ma8)
 
 pCrossDn1 = ta.crossunder(close, ma1)
 pCrossDn2 = ta.crossunder(close, ma2)
 pCrossDn3 = ta.crossunder(close, ma3)
 pCrossDn4 = ta.crossunder(close, ma4)
+pCrossDn5 = ta.crossunder(close, ma5)
+pCrossDn6 = ta.crossunder(close, ma6)
+pCrossDn7 = ta.crossunder(close, ma7)
+pCrossDn8 = ta.crossunder(close, ma8)
 
-pCrossLong = (not useCross1UpLong or pCrossUp1) and (not useCross2UpLong or pCrossUp2) and (not useCross3UpLong or pCrossUp3) and (not useCross4UpLong or pCrossUp4) and (not useCross1DnLong or pCrossDn1) and (not useCross2DnLong or pCrossDn2) and (not useCross3DnLong or pCrossDn3) and (not useCross4DnLong or pCrossDn4)
-pCrossShort = (not useCross1UpShort or pCrossUp1) and (not useCross2UpShort or pCrossUp2) and (not useCross3UpShort or pCrossUp3) and (not useCross4UpShort or pCrossUp4) and (not useCross1DnShort or pCrossDn1) and (not useCross2DnShort or pCrossDn2) and (not useCross3DnShort or pCrossDn3) and (not useCross4DnShort or pCrossDn4)
+pCrossLong = (not useCross1UpLong or pCrossUp1) and (not useCross2UpLong or pCrossUp2) and (not useCross3UpLong or pCrossUp3) and (not useCross4UpLong or pCrossUp4) and (not useCross5UpLong or pCrossUp5) and (not useCross6UpLong or pCrossUp6) and (not useCross7UpLong or pCrossUp7) and (not useCross8UpLong or pCrossUp8) and (not useCross1DnLong or pCrossDn1) and (not useCross2DnLong or pCrossDn2) and (not useCross3DnLong or pCrossDn3) and (not useCross4DnLong or pCrossDn4) and (not useCross5DnLong or pCrossDn5) and (not useCross6DnLong or pCrossDn6) and (not useCross7DnLong or pCrossDn7) and (not useCross8DnLong or pCrossDn8)
+pCrossShort = (not useCross1UpShort or pCrossUp1) and (not useCross2UpShort or pCrossUp2) and (not useCross3UpShort or pCrossUp3) and (not useCross4UpShort or pCrossUp4) and (not useCross5UpShort or pCrossUp5) and (not useCross6UpShort or pCrossUp6) and (not useCross7UpShort or pCrossUp7) and (not useCross8UpShort or pCrossUp8) and (not useCross1DnShort or pCrossDn1) and (not useCross2DnShort or pCrossDn2) and (not useCross3DnShort or pCrossDn3) and (not useCross4DnShort or pCrossDn4) and (not useCross5DnShort or pCrossDn5) and (not useCross6DnShort or pCrossDn6) and (not useCross7DnShort or pCrossDn7) and (not useCross8DnShort or pCrossDn8)
 
 // Moving average crossover checks
 cross1ma1 = f_convertMA(cross1ma1Str)
@@ -422,8 +526,8 @@ timeOff = useTimeOff and timeOffSession
 priceSignalLong     = not usePriceLong or (priceLongAB == 'Above' and priceSource >= priceMaLong) or (priceLongAB == 'Below' and priceSource <= priceMaLong)
 priceSignalShort    = not usePriceShort or (priceShortAB == 'Above' and priceSource >= priceMaShort) or (priceShortAB == 'Below' and priceSource <= priceMaShort)
 
-maSignalLong 		= (not i_ma1Above2 or ma1Above2) and (not i_ma2Above3 or ma2Above3) and (not i_ma3Above4 or ma3Above4) and (not useMATestLong or maTestLong) and pCrossLong
-maSignalShort		= (not i_ma1Below2 or ma2Above1) and (not i_ma2Below3 or ma3Above2) and (not i_ma3Below4 or ma4Above3) and (not useMATestShort or maTestShort) and pCrossShort
+maSignalLong 		= (not i_ma1Above2 or ma1Above2) and (not i_ma2Above3 or ma2Above3) and (not i_ma3Above4 or ma3Above4) and (not i_ma4Above5 or ma4Above5) and (not i_ma5Above6 or ma5Above6) and (not i_ma6Above7 or ma6Above7) and (not i_ma7Above8 or ma7Above8) and (not useMATestLong or maTestLong) and pCrossLong
+maSignalShort		= (not i_ma1Below2 or ma2Above1) and (not i_ma2Below3 or ma3Above2) and (not i_ma3Below4 or ma4Above3) and (not i_ma4Below5 or ma5Above4) and (not i_ma5Below6 or ma6Above5) and (not i_ma6Below7 or ma7Above6) and (not i_ma7Below8 or ma8Above7) and (not useMATestShort or maTestShort) and pCrossShort
 
 rsiSignalLong		= not includeRSILong or (rsiHighLong > rsi and rsi > rsiLowLong)
 rsiSignalShort		= not includeRSIShort or (rsiHighShort > rsi and rsi > rsiLowShort)
@@ -480,6 +584,10 @@ plot(includeMA1 ? ma1 : na, title='MA 1', color=ma1Color, linewidth=2, offset=0)
 plot(includeMA2 ? ma2 : na, title='MA 2', color=ma2Color, linewidth=2, offset=0)
 plot(includeMA3 ? ma3 : na, title='MA 3', color=ma3Color, linewidth=2, offset=0)
 plot(includeMA4 ? ma4 : na, title='MA 4', color=ma4Color, linewidth=2, offset=0)
+plot(includeMA5 ? ma5 : na, title='MA 5', color=ma5Color, linewidth=2, offset=0)
+plot(includeMA6 ? ma6 : na, title='MA 6', color=ma6Color, linewidth=2, offset=0)
+plot(includeMA7 ? ma7 : na, title='MA 7', color=ma7Color, linewidth=2, offset=0)
+plot(includeMA8 ? ma8 : na, title='MA 8', color=ma8Color, linewidth=2, offset=0)
 
 // Bollinger Bands
 plot(plotBB ? basis : na, title='Basis', color=color.orange, linewidth=1)
