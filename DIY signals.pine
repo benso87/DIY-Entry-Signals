@@ -111,8 +111,6 @@ bbwpPriceSource = input.source  (close, title='Source', inline='1', group='BBWP'
 bbwpBasisType   = input.string  ('SMA', title='Basis Type', options=['SMA', 'EMA', 'VWMA'], inline='1', group='BBWP')
 bbwpLength      = input.int     (13, title='Length', minval=1, inline='2', group='BBWP')
 bbwpLookback    = input.int     (252, title='Lookback', minval=1, inline='2', group='BBWP')
-bbwpMax			= input.float	(35, title='BBWP Max', minval=0, maxval=100, step=0.01,	inline='3', group='BBWP')
-bbwpMin			= input.float	(0, title='BBWP Min', minval=0, maxval=100, step=0.01,	inline='3', group='BBWP')
 
 // PMARP
 pmarpSource     = input.source  (close, title='Source', inline='1', group='PMARP')
@@ -187,6 +185,8 @@ includeBBLong       = input.bool    (false, title='Bollinger Bands', inline='bb'
 includBBBiasLong    = input.bool    (false, title='Bias', inline='bb', group='Long Conditions', tooltip='Signal only if the BB midline is above the chose moving average.')
 includeBBTestLong   = input.bool    (false, title='Test Lower (Experimental)', inline='bb', group='Long Conditions', tooltip='Signal only on a test of the lower band.')
 includeBBWPLong  	= input.bool    (false, title='BBWP', inline='bbwp', group='Long Conditions')
+bbwpMinLong 		= input.float	(0, title='Min', minval=0, maxval=100, step=0.01,	inline='bbwp', group='Long Conditions')
+bbwpMaxLong			= input.float	(35, title='Max', minval=0, maxval=100, step=0.01,	inline='bbwp', group='Long Conditions')
 includePMARPLong 	= input.bool    (false, title='PMARP', inline='pmarp', group='Long Conditions')
 pmarpLongAB     	= input.string  ('Below', title='', options=['Above', 'Below'], inline='pmarp', group='Long Conditions')
 pmarpThresholdLong	= input.float   (15, title='', inline='pmarp', group='Long Conditions')
@@ -246,6 +246,8 @@ includeBBShort      = input.bool    (false, title='Bollinger Bands', inline='bb'
 includBBBiasShort   = input.bool    (false, title='Bias', inline='bb', group='Short Conditions', tooltip='Signal only if the BB midline is below the chosen moving average.')
 includeBBTestShort  = input.bool    (false, title='Test Upper (Experimental)', inline='bb', group='Short Conditions', tooltip='Signal only on a test of the upper band.')
 includeBBWPShort 	= input.bool    (false, title='BBWP', inline='bbwp', group='Short Conditions')
+bbwpMinShort 		= input.float	(0, title='Min', minval=0, maxval=100, step=0.01,	inline='bbwp', group='Short Conditions')
+bbwpMaxShort		= input.float	(35, title='Max', minval=0, maxval=100, step=0.01,	inline='bbwp', group='Short Conditions')
 includePMARPShort 	= input.bool    (false, title='PMARP', inline='pmarp', group='Short Conditions')
 pmarpShortAB    	= input.string  ('Above', title='', options=['Above', 'Below'], inline='pmarp', group='Short Conditions')
 pmarpThresholdShort	= input.float   (85, title='', inline='pmarp', group='Short Conditions')
@@ -544,8 +546,8 @@ srsiSignalShort     = not includeSRSIShort or srsiInRangeShort
 bbSignalLong        = not includeBBLong or ((not includBBBiasLong or longBias) and (not includeBBTestLong or bbLowTest))
 bbSignalShort       = not includeBBShort or ((not includBBBiasShort or shortBias) and (not includeBBTestShort or bbUpTest))
 
-bbwpSignalLong		= not includeBBWPLong or (bbwp < bbwpMax and bbwp > bbwpMin)
-bbwpSignalShort		= not includeBBWPShort or (bbwp < bbwpMax and bbwp > bbwpMin)
+bbwpSignalLong		= not includeBBWPLong or (bbwp < bbwpMaxLong and bbwp > bbwpMinLong)
+bbwpSignalShort		= not includeBBWPShort or (bbwp < bbwpMaxShort and bbwp > bbwpMinShort)
 
 pmarpSignalLong		= not includePMARPLong or (pmarpLongAB == 'Above' and pmarp >= pmarpThresholdLong) or (pmarpLongAB == 'Below' and pmarp <= pmarpThresholdLong)
 pmarpSignalShort	= not includePMARPShort or (pmarpShortAB == 'Above' and pmarp >= pmarpThresholdShort) or (pmarpShortAB == 'Below' and pmarp <= pmarpThresholdShort)
