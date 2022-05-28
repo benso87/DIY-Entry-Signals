@@ -90,10 +90,13 @@ periodD 	= input.int     (3, title='D Smoothing', minval=1, group='Stochastic')
 kdSig       = input.bool    (false, title='K & D', group='Stochastic', tooltip='Turn this on to only signal when both K and D are in the selected range.')
 
 // Stoch RSI
-srsiSmoothK = input.int   (3, title='K', minval=1, group='Stochastic RSI')
-srsiSmoothD = input.int   (3, title='D', minval=1, group='Stochastic RSI')
-srsiLength  = input.int   (14, title='Stoch Length', minval=1, group='Stochastic RSI')
-srsiKDSig   = input.bool  (false, title='K & D', group='Stochastic RSI', tooltip='Turn this on to only signal when both K and D are in the selected range.')
+srsiSmoothK = input.int    (3, title='K', minval=1, group='Stochastic RSI')
+srsiSmoothD = input.int    (3, title='D', minval=1, group='Stochastic RSI')
+srsiLength  = input.int    (14, title='Stoch Length', minval=1, group='Stochastic RSI')
+srsiKDSig   = input.bool   (false, title='K & D', group='Stochastic RSI', tooltip='Turn this on to only signal when both K and D are in the selected range.')
+srsiOwnRSI  = input.bool   (false, title='Use Separate RSI', group='Stochastic RSI', tooltip='If unchecked, use RSI from the RSI section. If checked, use RSI settings in this section')
+srsiSource  = input.source (close, title='RSI Source for Stoch RSI', group='Stochastic RSI', tooltip='Only used if "Use Seaprate RSI" is checked.')
+srsiPeriod  = input.int    (14, title='RSI Length for Stoch RSI', group='Stochastic RSI', tooltip='Only used if "Use Seaprate RSI" is checked.')
 
 // Bollinger Bands
 bbSource    = input.source (close, title='Source', group='Bollinger Bands')
@@ -428,7 +431,13 @@ stochInRangeLong = kdSig ? stochHighLong >= k and k >= stochLowLong and stochHig
 stochInRangeShort = kdSig ? stochHighShort >= k and k >= stochLowShort and stochHighShort >= d and d >= stochLowShort : stochHighShort >= k and k >= stochLowShort
 
 // Stoch RSI
-srsiK = ta.sma(ta.stoch(rsi, rsi, rsi, srsiLength), srsiSmoothK)
+sUp = ta.rma(math.max(ta.change(srsiSource), 0), srsiPeriod)
+sDown = ta.rma(-math.min(ta.change(srsiSource), 0), srsiPeriod)
+srsiRSI = sDown == 0 ? 100 : sUp == 0 ? 0 : 100 - (100 / (1 + sUp / sDown))
+
+rsiSelect = srsiOwnRSI ? srsiRSI : rsi
+
+srsiK = ta.sma(ta.stoch(rsiSelect, rsiSelect, rsiSelect, srsiLength), srsiSmoothK)
 srsiD = ta.sma(srsiK, srsiSmoothD)
 
 srsiInRangeLong = srsiKDSig ? srsiHighLong >= srsiK and srsiK >= srsiLowLong and srsiHighLong >= srsiD and srsiD >= srsiLowLong : srsiHighLong >= srsiK and srsiK >= srsiLowLong
