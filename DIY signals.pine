@@ -25,6 +25,11 @@ barColorShort   = input.color  (#ff0014, title='Short Bar Color', group='Signal 
 // Price
 priceSource = input.source(close, title='Price Source', group='Price')
 
+// Volume
+vMaLength   = input.int (20, title='MA Length', minval=1, group='Volume')
+vMaType     = input.string ('SMA', title='MA Type', options=['SMA', 'EMA', 'WMA'], group='Volume')
+vMult     = input.float (1.5, title='Multiplier', minval=0, group='Volume', tooltip='Volume needs to be above this much times the previous volume bar to trigger a signal.')
+
 // Moving Averages
 maSource    = input.source  (close, title='Source', inline='source', group='Moving Averages')
 includeMA1	= input.bool	(false, title='', inline='MA 1', group='Moving Averages')
@@ -146,6 +151,8 @@ usePriceAbMaLong    = input.bool    (false, title='Price Above', inline='price1'
 priceAbMaLongStr    = input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='price1', group='Long Conditions')
 usePriceBlMaLong    = input.bool    (false, title='Price Below', inline='price2', group='Long Conditions')
 priceBlMaLongStr    = input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='price2', group='Long Conditions')
+useVolumeLong       = input.bool    (false, title='Volume', inline='volume1', group='Long Conditions')
+volumeAboveLong     = input.string  ('Both', title='Above', options=['MA', 'Mult', 'Both'], inline='volume1', group='Long Conditions', tooltip='See volume section for criteria used here.')
 i_ma1Above2   		= input.bool    (false, title='MA 1 > MA 2', inline='ma above 1', group='Long Conditions')
 i_ma2Above3   		= input.bool    (false, title='MA 2 > MA 3', inline='ma above 2', group='Long Conditions')
 i_ma3Above4   		= input.bool    (false, title='MA 3 > MA 4', inline='ma above 3', group='Long Conditions')
@@ -208,6 +215,8 @@ usePriceAbMaShort   = input.bool    (false, title='Price Above', inline='price1'
 priceAbMaShortStr   = input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='price1', group='Short Conditions')
 usePriceBlMaShort   = input.bool    (false, title='Price Below', inline='price2', group='Short Conditions')
 priceBlMaShortStr   = input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='price2', group='Short Conditions')
+useVolumeShort      = input.bool    (false, title='Volume', inline='volume1', group='Short Conditions')
+volumeAboveShort    = input.string  ('Both', title='Above', options=['MA', 'Mult', 'Both'], inline='volume1', group='Short Conditions', tooltip='See volume section for criteria used here.')
 i_ma1Below2   		= input.bool    (false, title='MA 1 < MA 2', inline='ma below 1', group='Short Conditions')
 i_ma2Below3   		= input.bool    (false, title='MA 2 < MA 3', inline='ma below 2', group='Short Conditions')
 i_ma3Below4   		= input.bool    (false, title='MA 3 < MA 4', inline='ma below 3', group='Short Conditions')
@@ -276,6 +285,16 @@ f_ma(source, length, type) =>
         'EMA' => ta.ema(source, length)
         'RMA' => ta.rma(source, length)
         'WMA' => ta.wma(source, length)
+
+// volume
+vMa = f_ma(volume, vMaLength, vMaType)
+
+vAboveMa = volume > vMa
+vAboveMult = volume >= volume[1] * vMult
+vAboveBoth = vAboveMa and vAboveMult
+
+vAboveLong = volumeAboveLong == 'MA' ? vAboveMa : volumeAboveLong == 'Mult' ? vAboveMult : vAboveBoth
+vAboveShort = volumeAboveShort == 'MA' ? vAboveMa : volumeAboveShort == 'Mult' ? vAboveMult : vAboveBoth
 
 // Moving Averages
 ma1 = f_ma(maSource, ma1Length, ma1Type)
@@ -541,6 +560,9 @@ timeOff = useTimeOff and timeOffSession
 priceSignalLong     = (not usePriceAbMaLong or close > priceAbMaLong) and (not usePriceBlMaLong or close < priceBlMaLong)
 priceSignalShort    = (not usePriceAbMaShort or close > priceAbMaShort) and (not usePriceBlMaShort or close < priceBlMaShort)
 
+volSignalLong       = not useVolumeLong or vAboveLong
+volSignalShort      = not useVolumeShort or vAboveShort
+
 maSignalLong 		= (not i_ma1Above2 or ma1Above2) and (not i_ma2Above3 or ma2Above3) and (not i_ma3Above4 or ma3Above4) and (not i_ma4Above5 or ma4Above5) and (not i_ma5Above6 or ma5Above6) and (not i_ma6Above7 or ma6Above7) and (not i_ma7Above8 or ma7Above8) and (not useMATestLong or maTestLong) and pCrossLong
 maSignalShort		= (not i_ma1Below2 or ma2Above1) and (not i_ma2Below3 or ma3Above2) and (not i_ma3Below4 or ma4Above3) and (not i_ma4Below5 or ma5Above4) and (not i_ma5Below6 or ma6Above5) and (not i_ma6Below7 or ma7Above6) and (not i_ma7Below8 or ma8Above7) and (not useMATestShort or maTestShort) and pCrossShort
 
@@ -574,8 +596,8 @@ adxSignalShort      = not useADXShort or (adxABShort == 'Above' and adx >= adxTh
 adxDirSignalLong	= not useADXDirLong or (adxDirLong == 'Rising' and adx >= adx[1]) or (adxDirLong == 'Falling' and adx <= adx[1])
 adxDirSignalShort	= not useADXDirShort or (adxDirShort == 'Rising' and adx >= adx[1]) or (adxDirShort == 'Falling' and adx <= adx[1])
 
-longSignal 			= includeLong and not dayOff and not timeOff and (not useSigCheck or not sigCheckL) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalLong and maSignalLong and rsiSignalLong and rsiCrossSignalLong and stochSignalLong and srsiSignalLong and bbSignalLong and bbwpSignalLong and pmarpSignalLong and dmiSignalLong and adxSignalLong and adxDirSignalLong
-shortSignal 		= includeShort and not dayOff and not timeOff and (not useSigCheck or not sigCheckS) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalShort and maSignalShort and rsiSignalShort and rsiCrossSignalShort and stochSignalShort and srsiSignalShort and bbSignalShort and bbwpSignalShort and pmarpSignalShort and dmiSignalShort and adxSignalShort and adxDirSignalShort
+longSignal 			= includeLong and not dayOff and not timeOff and (not useSigCheck or not sigCheckL) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalLong and volSignalLong and maSignalLong and rsiSignalLong and rsiCrossSignalLong and stochSignalLong and srsiSignalLong and bbSignalLong and bbwpSignalLong and pmarpSignalLong and dmiSignalLong and adxSignalLong and adxDirSignalLong
+shortSignal 		= includeShort and not dayOff and not timeOff and (not useSigCheck or not sigCheckS) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalShort and volSignalShort and maSignalShort and rsiSignalShort and rsiCrossSignalShort and stochSignalShort and srsiSignalShort and bbSignalShort and bbwpSignalShort and pmarpSignalShort and dmiSignalShort and adxSignalShort and adxDirSignalShort
 
 // Check if a new signal should not be plotted
 
