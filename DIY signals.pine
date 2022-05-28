@@ -139,9 +139,10 @@ stopTimeH  = input.int  (13, title='Stop (UTC)', minval=0, maxval=23, group='Tim
 stopTimeM  = input.int  (0, title=':', minval=0, maxval=59, group='Time Off', inline='stop')
 
 // Long Conditions
-usePriceLong    	= input.bool    (false, title='Price', inline='price', group='Long Conditions')
-priceLongAB     	= input.string  ('Above', title='', options=['Above', 'Below'], inline='price', group='Long Conditions')
-priceMaLongStr   	= input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='price', group='Long Conditions')
+usePriceAbMaLong    = input.bool    (false, title='Price Above', inline='price1', group='Long Conditions')
+priceAbMaLongStr    = input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='price1', group='Long Conditions')
+usePriceBlMaLong    = input.bool    (false, title='Price Below', inline='price2', group='Long Conditions')
+priceBlMaLongStr    = input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='price2', group='Long Conditions')
 i_ma1Above2   		= input.bool    (false, title='MA 1 > MA 2', inline='ma above 1', group='Long Conditions')
 i_ma2Above3   		= input.bool    (false, title='MA 2 > MA 3', inline='ma above 2', group='Long Conditions')
 i_ma3Above4   		= input.bool    (false, title='MA 3 > MA 4', inline='ma above 3', group='Long Conditions')
@@ -200,9 +201,10 @@ useADXDirLong		= input.bool    (false, title='ADX Direction', inline='adx 2', gr
 adxDirLong			= input.string  ('Rising', title='', options=['Rising', 'Falling'], inline='adx 2', group='Long Conditions')
 
 // Short Conditions
-usePriceShort    	= input.bool    (false, title='Price', inline='price', group='Short Conditions')
-priceShortAB    	= input.string  ('Above', title='', options=['Above', 'Below'], inline='price', group='Short Conditions')
-priceMaShortStr   	= input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='price', group='Short Conditions')
+usePriceAbMaShort   = input.bool    (false, title='Price Above', inline='price1', group='Short Conditions')
+priceAbMaShortStr   = input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='price1', group='Short Conditions')
+usePriceBlMaShort   = input.bool    (false, title='Price Below', inline='price2', group='Short Conditions')
+priceBlMaShortStr   = input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4'], inline='price2', group='Short Conditions')
 i_ma1Below2   		= input.bool    (false, title='MA 1 < MA 2', inline='ma below 1', group='Short Conditions')
 i_ma2Below3   		= input.bool    (false, title='MA 2 < MA 3', inline='ma below 2', group='Short Conditions')
 i_ma3Below4   		= input.bool    (false, title='MA 3 < MA 4', inline='ma below 3', group='Short Conditions')
@@ -210,22 +212,22 @@ i_ma4Below5   		= input.bool    (false, title='MA 4 < MA 5', inline='ma below 4'
 i_ma5Below6   		= input.bool    (false, title='MA 5 < MA 6', inline='ma below 5', group='Short Conditions')
 i_ma6Below7   		= input.bool    (false, title='MA 6 < MA 7', inline='ma below 6', group='Short Conditions')
 i_ma7Below8   		= input.bool    (false, title='MA 7 < MA 8', inline='ma below 7', group='Short Conditions')
-useCross1UpShort     = input.bool    (false, title='Price Cross Up: MA 1', inline='cross up', group='Short Conditions')
-useCross2UpShort     = input.bool    (false, title='MA 2', inline='cross up', group='Short Conditions')
-useCross3UpShort     = input.bool    (false, title='MA 3', inline='cross up', group='Short Conditions')
-useCross4UpShort     = input.bool    (false, title='MA 4', inline='cross up', group='Short Conditions')
-useCross5UpShort     = input.bool    (false, title='MA 5', inline='cross up', group='Short Conditions')
-useCross6UpShort     = input.bool    (false, title='MA 6', inline='cross up', group='Short Conditions')
-useCross7UpShort     = input.bool    (false, title='MA 7', inline='cross up', group='Short Conditions')
-useCross8UpShort     = input.bool    (false, title='MA 8', inline='cross up', group='Short Conditions')
-useCross1DnShort     = input.bool    (false, title='Price Cross Down: MA 1', inline='cross dn', group='Short Conditions')
-useCross2DnShort     = input.bool    (false, title='MA 2', inline='cross dn', group='Short Conditions')
-useCross3DnShort     = input.bool    (false, title='MA 3', inline='cross dn', group='Short Conditions')
-useCross4DnShort     = input.bool    (false, title='MA 4', inline='cross dn', group='Short Conditions')
-useCross5DnShort     = input.bool    (false, title='MA 5', inline='cross dn', group='Short Conditions')
-useCross6DnShort     = input.bool    (false, title='MA 6', inline='cross dn', group='Short Conditions')
-useCross7DnShort     = input.bool    (false, title='MA 7', inline='cross dn', group='Short Conditions')
-useCross8DnShort     = input.bool    (false, title='MA 8', inline='cross dn', group='Short Conditions')
+useCross1UpShort    = input.bool    (false, title='Price Cross Up: MA 1', inline='cross up', group='Short Conditions')
+useCross2UpShort    = input.bool    (false, title='MA 2', inline='cross up', group='Short Conditions')
+useCross3UpShort    = input.bool    (false, title='MA 3', inline='cross up', group='Short Conditions')
+useCross4UpShort    = input.bool    (false, title='MA 4', inline='cross up', group='Short Conditions')
+useCross5UpShort    = input.bool    (false, title='MA 5', inline='cross up', group='Short Conditions')
+useCross6UpShort    = input.bool    (false, title='MA 6', inline='cross up', group='Short Conditions')
+useCross7UpShort    = input.bool    (false, title='MA 7', inline='cross up', group='Short Conditions')
+useCross8UpShort    = input.bool    (false, title='MA 8', inline='cross up', group='Short Conditions')
+useCross1DnShort    = input.bool    (false, title='Price Cross Down: MA 1', inline='cross dn', group='Short Conditions')
+useCross2DnShort    = input.bool    (false, title='MA 2', inline='cross dn', group='Short Conditions')
+useCross3DnShort    = input.bool    (false, title='MA 3', inline='cross dn', group='Short Conditions')
+useCross4DnShort    = input.bool    (false, title='MA 4', inline='cross dn', group='Short Conditions')
+useCross5DnShort    = input.bool    (false, title='MA 5', inline='cross dn', group='Short Conditions')
+useCross6DnShort    = input.bool    (false, title='MA 6', inline='cross dn', group='Short Conditions')
+useCross7DnShort    = input.bool    (false, title='MA 7', inline='cross dn', group='Short Conditions')
+useCross8DnShort    = input.bool    (false, title='MA 8', inline='cross dn', group='Short Conditions')
 useMATestShort      = input.bool    (false, title='MA Test (beta)', inline='ma test', group='Short Conditions', tooltip='Experimental. This will check to see if the candle touches the moving average and closes below it, or if the previous candle opened below and closed above, and the signal candle closes back below.')
 i_maTestedShort     = input.string  ('MA 1', title='', options=['MA 1', 'MA 2', 'MA 3', 'MA 4', 'MA 5', 'MA 6', 'MA 7', 'MA 8'], inline='ma test', group='Short Conditions')
 includeRSIShort  	= input.bool    (false, title='RSI', inline='rsi', group='Short Conditions')
@@ -405,8 +407,10 @@ maTestLong = (low <= maTestedLong and close >= maTestedLong) or (open[1] > maTes
 maTestShort = (high >= maTestedShort and close <= maTestedShort) or (open[1] < maTestedShort[1] and close[1] >= maTestedShort[1] and close < maTestedShort)
 
 // Price check conversions
-priceMaLong = f_convertMA(priceMaLongStr)
-priceMaShort = f_convertMA(priceMaShortStr)
+priceAbMaLong = f_convertMA(priceAbMaLongStr)
+priceBlMaLong = f_convertMA(priceBlMaLongStr)
+priceAbMaShort = f_convertMA(priceAbMaShortStr)
+priceBlMaShort = f_convertMA(priceBlMaShortStr)
 
 // RSI
 up = ta.rma(math.max(ta.change(rsiSource), 0), rsiPeriod)
@@ -525,8 +529,8 @@ timeOffSession = startTime <= stopTime ? time(timeframe.period, session=startTim
 dayOff = useOffDays and ((offSun and dayofweek == dayofweek.sunday) or (offMon and dayofweek == dayofweek.monday) or (offTue and dayofweek == dayofweek.tuesday) or (offWed and dayofweek == dayofweek.wednesday) or (offThur and dayofweek == dayofweek.thursday) or (offFri and dayofweek == dayofweek.friday) or (offSat and dayofweek == dayofweek.saturday))
 timeOff = useTimeOff and timeOffSession
 
-priceSignalLong     = not usePriceLong or (priceLongAB == 'Above' and priceSource >= priceMaLong) or (priceLongAB == 'Below' and priceSource <= priceMaLong)
-priceSignalShort    = not usePriceShort or (priceShortAB == 'Above' and priceSource >= priceMaShort) or (priceShortAB == 'Below' and priceSource <= priceMaShort)
+priceSignalLong     = (not usePriceAbMaLong or close > priceAbMaLong) and (not usePriceBlMaLong or close < priceBlMaLong)
+priceSignalShort    = (not usePriceAbMaShort or close > priceAbMaShort) and (not usePriceBlMaShort or close < priceBlMaShort)
 
 maSignalLong 		= (not i_ma1Above2 or ma1Above2) and (not i_ma2Above3 or ma2Above3) and (not i_ma3Above4 or ma3Above4) and (not i_ma4Above5 or ma4Above5) and (not i_ma5Above6 or ma5Above6) and (not i_ma6Above7 or ma6Above7) and (not i_ma7Above8 or ma7Above8) and (not useMATestLong or maTestLong) and pCrossLong
 maSignalShort		= (not i_ma1Below2 or ma2Above1) and (not i_ma2Below3 or ma3Above2) and (not i_ma3Below4 or ma4Above3) and (not i_ma4Below5 or ma5Above4) and (not i_ma5Below6 or ma6Above5) and (not i_ma6Below7 or ma7Above6) and (not i_ma7Below8 or ma8Above7) and (not useMATestShort or maTestShort) and pCrossShort
