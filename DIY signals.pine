@@ -140,11 +140,8 @@ offFri      = input.bool (false, title='Friday', group='Days Off')
 offSat      = input.bool (true, title='Saturday', group='Days Off')
 
 // Time Off
-useTimeOff = input.bool (false, title='Time Off', group='Time Off')
-startTimeH = input.int  (5, title='Start (UTC)', minval=0, maxval=23, group='Time Off', inline='start')
-startTimeM = input.int  (0, title=':', minval=0, maxval=59, group='Time Off', inline='start')
-stopTimeH  = input.int  (13, title='Stop (UTC)', minval=0, maxval=23, group='Time Off', inline='stop')
-stopTimeM  = input.int  (0, title=':', minval=0, maxval=59, group='Time Off', inline='stop')
+useTimeOff   = input.bool (false, title='Time Off', group='Time Off')
+timeOffRange = input.session ('0500-1300', title='Time Off', group='Time Off')
 
 // Long Conditions
 usePriceAbMaLong    = input.bool    (false, title='Price Above', inline='price1', group='Long Conditions')
@@ -541,17 +538,7 @@ sigCheckS = array.sum(sigCheckArrayS) > 0 ? true : false
 // plotchar(sigCheckS, title='sigCheckS', char='.', color=noColor)
 
 // Time Off
-f_timeSession (H, M) =>
-    h = H < 10 ? '0' + str.tostring(H) : str.tostring(H)
-    m = M < 10 ? '0' + str.tostring(M) : str.tostring(M)
-    t = h + m
-
-startTime = startTimeH * 100 + startTimeM
-startTimeStr = f_timeSession(startTimeH, startTimeM)
-stopTime = stopTimeH * 100 + stopTimeM
-stopTimeStr = f_timeSession(stopTimeH, stopTimeM)
-
-timeOffSession = startTime <= stopTime ? time(timeframe.period, session=startTimeStr + '-' + stopTimeStr) : time(timeframe.period, session='0000-' + stopTimeStr + ',' + startTimeStr + '-2359')
+timeOffSession = time == time(timeframe.period, timeOffRange)
 
 // Signals
 dayOff = useOffDays and ((offSun and dayofweek == dayofweek.sunday) or (offMon and dayofweek == dayofweek.monday) or (offTue and dayofweek == dayofweek.tuesday) or (offWed and dayofweek == dayofweek.wednesday) or (offThur and dayofweek == dayofweek.thursday) or (offFri and dayofweek == dayofweek.friday) or (offSat and dayofweek == dayofweek.saturday))
