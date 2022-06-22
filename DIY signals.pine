@@ -192,6 +192,9 @@ srsiHighLong        = input.float   (10, title='High', minval=0, maxval=100, inl
 includeBBLong       = input.bool    (false, title='Bollinger Bands', inline='bb', group='Long Conditions')
 includBBBiasLong    = input.bool    (false, title='Bias', inline='bb', group='Long Conditions', tooltip='Signal only if the BB midline is above the chose moving average.')
 includeBBTestLong   = input.bool    (false, title='Test Lower (Experimental)', inline='bb', group='Long Conditions', tooltip='Signal only on a test of the lower band.')
+includeBBRLong      = input.bool    (false, title='BB%B', inline='bb2', group='Long Conditions')
+bbrDirLong          = input.string  ('Below', title='', options=['Above', 'Below'], inline='bb2', group='Long Conditions')
+bbrLevelLong        = input.float   (0.1, title='', minval=-1, maxval=2, inline='bb2', group='Long Conditions')
 includeBBWPLong  	= input.bool    (false, title='BBWP', inline='bbwp', group='Long Conditions')
 bbwpMinLong 		= input.float	(0, title='Min', minval=0, maxval=100, step=0.01,	inline='bbwp', group='Long Conditions')
 bbwpMaxLong			= input.float	(35, title='Max', minval=0, maxval=100, step=0.01,	inline='bbwp', group='Long Conditions')
@@ -256,6 +259,9 @@ srsiHighShort       = input.float   (100, title='High', minval=0, maxval=100, in
 includeBBShort      = input.bool    (false, title='Bollinger Bands', inline='bb', group='Short Conditions')
 includBBBiasShort   = input.bool    (false, title='Bias', inline='bb', group='Short Conditions', tooltip='Signal only if the BB midline is below the chosen moving average.')
 includeBBTestShort  = input.bool    (false, title='Test Upper (Experimental)', inline='bb', group='Short Conditions', tooltip='Signal only on a test of the upper band.')
+includeBBRShort     = input.bool    (false, title='BB%B', inline='bb2', group='Short Conditions')
+bbrDirShort         = input.string  ('Above', title='', options=['Above', 'Below'], inline='bb2', group='Short Conditions')
+bbrLevelShort       = input.float   (0.9, title='', minval=-1, maxval=2, inline='bb2', group='Short Conditions')
 includeBBWPShort 	= input.bool    (false, title='BBWP', inline='bbwp', group='Short Conditions')
 bbwpMinShort 		= input.float	(0, title='Min', minval=0, maxval=100, step=0.01,	inline='bbwp', group='Short Conditions')
 bbwpMaxShort		= input.float	(35, title='Max', minval=0, maxval=100, step=0.01,	inline='bbwp', group='Short Conditions')
@@ -464,6 +470,10 @@ basis = ta.sma(bbSource, bbLength)
 dev = bbMult * ta.stdev(bbSource, bbLength)
 upper = basis + dev
 lower = basis - dev
+bbr = (bbSource - lower) / (upper - lower)
+
+bbrSignalLong = bbrDirLong == 'Above' ? bbr >= bbrLevelLong : bbr <= bbrLevelLong
+bbrSignalShort = bbrDirShort == 'Above' ? bbr >= bbrLevelShort : bbr <= bbrLevelShort
 
 bbUpTest = (high >= upper and close < upper and close > basis) or (close[1] >= upper[1] and close < upper and close > basis)
 bbLowTest = (low <= lower and close > lower and close < basis) or (close[1] <= lower[1] and close > lower and close < basis)
@@ -568,8 +578,8 @@ srsiSignalShort     = not includeSRSIShort or srsiInRangeShort
 bbSignalLong        = not includeBBLong or ((not includBBBiasLong or longBias) and (not includeBBTestLong or bbLowTest))
 bbSignalShort       = not includeBBShort or ((not includBBBiasShort or shortBias) and (not includeBBTestShort or bbUpTest))
 
-bbwpSignalLong		= not includeBBWPLong or (bbwp < bbwpMaxLong and bbwp > bbwpMinLong)
-bbwpSignalShort		= not includeBBWPShort or (bbwp < bbwpMaxShort and bbwp > bbwpMinShort)
+bbwpSignalLong		= (not includeBBWPLong or (bbwp < bbwpMaxLong and bbwp > bbwpMinLong)) and (not includeBBRLong or bbrSignalLong)
+bbwpSignalShort		= (not includeBBWPShort or (bbwp < bbwpMaxShort and bbwp > bbwpMinShort)) and (not includeBBRShort or bbrSignalShort)
 
 pmarpSignalLong		= not includePMARPLong or (pmarpLongAB == 'Above' and pmarp >= pmarpThresholdLong) or (pmarpLongAB == 'Below' and pmarp <= pmarpThresholdLong)
 pmarpSignalShort	= not includePMARPShort or (pmarpShortAB == 'Above' and pmarp >= pmarpThresholdShort) or (pmarpShortAB == 'Below' and pmarp <= pmarpThresholdShort)
