@@ -129,6 +129,13 @@ pmarpMAType     = input.string  ('VWMA', title='MA Type', options=[ 'SMA', 'EMA'
 // ADX/DMI
 length = input.int(14, title="ADX DI Length", group='ADX/DMI')
 
+// VWAP
+vwapPlot        = input.bool(false, title='Plot VWAP', group='VWAP')
+anchorIn        = input.string(defval = 'Session', title='Anchor Period', options=['Session', 'Week', 'Month', 'Year'], group='VWAP')
+vwapSrc         = input.source(hlc3, title='Source', group='VWAP')
+vwapShowBands   = input.bool(true, title='Calculate Bands', group='VWAP')
+vwapStDev       = input.float(1, title='Bands Multiplier', group='VWAP')
+
 // Days Off
 useOffDays  = input.bool (false, title='Days Off', group='Days Off')
 offSun      = input.bool (true, title='Sunday', group='Days Off')
@@ -428,8 +435,8 @@ crossColor = cross3Up ? cross3Color1 : cross3Down ? cross3Color2 : cross2Up ? cr
 maTestedLong = f_convertMA(i_maTestedLong)
 maTestedShort = f_convertMA(i_maTestedShort)
 
-maTestLong = (low <= maTestedLong and close >= maTestedLong) or (open[1] > maTestedLong[1] and close[1] <= maTestedLong[1] and close > maTestedLong)
-maTestShort = (high >= maTestedShort and close <= maTestedShort) or (open[1] < maTestedShort[1] and close[1] >= maTestedShort[1] and close < maTestedShort)
+maTestLong = (low <= maTestedLong and close >= maTestedLong) or (open[1] >= maTestedLong[1] and close[1] <= maTestedLong[1] and close >= maTestedLong)
+maTestShort = (high >= maTestedShort and close <= maTestedShort) or (open[1] <= maTestedShort[1] and close[1] >= maTestedShort[1] and close <= maTestedShort)
 
 // Price check conversions
 priceAbMaLong = f_convertMA(priceAbMaLongStr)
@@ -536,6 +543,15 @@ sum = plus + minus
 adx = 100 * ta.rma(math.abs(plus - minus) / (sum == 0 ? 1 : sum), length)
 diff = plus - minus
 
+// VWAP
+anchor = switch anchorIn
+    'Daily' => timeframe.change('1D')
+    'Weekly' => timeframe.change('1W')
+    'Monthly' => timeframe.change('1M')
+    'Yearly' => timeframe.change('1Y')
+
+[vwap, vUpper, vLower] = ta.vwap(vwapSrc, anchor, vwapStDev)
+
 // Calculations and variables to determine if a signal has been plotted recently
 var sigCheckArrayL = array.new_int (0)
 var sigCheckArrayS = array.new_int (0)
@@ -548,7 +564,7 @@ sigCheckS = array.sum(sigCheckArrayS) > 0 ? true : false
 // plotchar(sigCheckS, title='sigCheckS', char='.', color=noColor)
 
 // Time Off
-timeOffSession = time == time(timeframe.period, timeOffRange)
+timeOffSession = time == time(timeframe=timeframe.period, session=timeOffRange, timezone='UTC')
 
 // Signals
 dayOff = useOffDays and ((offSun and dayofweek == dayofweek.sunday) or (offMon and dayofweek == dayofweek.monday) or (offTue and dayofweek == dayofweek.tuesday) or (offWed and dayofweek == dayofweek.wednesday) or (offThur and dayofweek == dayofweek.thursday) or (offFri and dayofweek == dayofweek.friday) or (offSat and dayofweek == dayofweek.saturday))
@@ -628,6 +644,9 @@ plot(plotBB ? basis : na, title='Basis', color=color.orange, linewidth=1)
 p1 = plot(plotBB ? upper : na, title='Upper', color=color.blue, linewidth=2)
 p2 = plot(plotBB ? lower : na, title='Lower', color=color.blue, linewidth=2)
 fill(p1, p2, title='BB Background', color=fillColor)
+
+// VWAP
+plot(vwapPlot ? vwap : na, title='VWAP', color=color.orange, linewidth=2)
 
 // Signals
 plotshape(plotType == 'Shape' ? longSignal : na,  title='Long',  location=location.belowbar, style=shape.triangleup, size=size.small, color=color.blue)
