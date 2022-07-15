@@ -131,9 +131,13 @@ length = input.int(14, title="ADX DI Length", group='ADX/DMI')
 
 // VWAP
 vwapPlot        = input.bool(false, title='Plot VWAP', group='VWAP')
-anchorIn        = input.string(defval = 'Session', title='Anchor Period', options=['Session', 'Week', 'Month', 'Year'], group='VWAP')
+hideonDWM       = input.bool(false, title="Hide VWAP on 1D or Above", group="VWAP")
+anchor        = input.string(defval = 'Session', title='Anchor Period', options=['Session', 'Week', 'Month', 'Year'], group='VWAP')
 vwapSrc         = input.source(hlc3, title='Source', group='VWAP')
-vwapShowBands   = input.bool(true, title='Calculate Bands', group='VWAP')
+vwapColor       = input.color(color.blue, title='Color', group='VWAP')
+vwapWidth       = input.int(2, title='Line Width', minval=1, maxval=4, group='VWAP')
+vwapOffset      = input.int(0, title='Offset', group='VWAP')
+vwapShowBands   = input.bool(false, title='Calculate Bands', group='VWAP')
 vwapStDev       = input.float(1, title='Bands Multiplier', group='VWAP')
 
 // Days Off
@@ -216,6 +220,9 @@ adxABLong      		= input.string  ('Below', title='', options=['Above', 'Below'],
 adxThresholdLong  	= input.float   (20, title='', inline='adx', group='Long Conditions')
 useADXDirLong		= input.bool    (false, title='ADX Direction', inline='adx 2', group='Long Conditions')
 adxDirLong			= input.string  ('Rising', title='', options=['Rising', 'Falling'], inline='adx 2', group='Long Conditions')
+useVwapLong         = input.bool    (false, title='VWAP', inline='vwap', group='Long Conditions')
+vwapABLong          = input.string  ('Below', title='', options=['Above', 'Below'], inline='vwap', group='Long Conditions')
+vwapLevelLong       = input.string  ('VWAP', title='', options=['Top', 'VWAP', 'Bottom'], inline='vwap', group='Long Conditions')
 
 // Short Conditions
 usePriceAbMaShort   = input.bool    (false, title='Price Above', inline='price1', group='Short Conditions')
@@ -283,6 +290,9 @@ adxABShort     		= input.string  ('Below', title='', options=['Above', 'Below'],
 adxThresholdShort  	= input.float   (20, title='', inline='adx', group='Short Conditions')
 useADXDirShort		= input.bool    (false, title='ADX Direction', inline='adx 2', group='Short Conditions')
 adxDirShort			= input.string  ('Rising', title='', options=['Rising', 'Falling'], inline='adx 2', group='Short Conditions')
+useVwapShort        = input.bool    (false, title='VWAP', inline='vwap', group='Short Conditions')
+vwapABShort         = input.string  ('Above', title='', options=['Above', 'Below'], inline='vwap', group='Short Conditions')
+vwapLevelShort      = input.string  ('VWAP', title='', options=['Top', 'VWAP', 'Bottom'], inline='vwap', group='Short Conditions')
 
 
 //////////////////////////////////////////////////////////////
@@ -544,13 +554,57 @@ adx = 100 * ta.rma(math.abs(plus - minus) / (sum == 0 ? 1 : sum), length)
 diff = plus - minus
 
 // VWAP
-anchor = switch anchorIn
-    'Daily' => timeframe.change('1D')
-    'Weekly' => timeframe.change('1W')
-    'Monthly' => timeframe.change('1M')
-    'Yearly' => timeframe.change('1Y')
+var cumVol = 0.
+cumVol += nz(volume)
+if barstate.islast and cumVol == 0
+    runtime.error("No volume is provided by the data vendor.")
+    
+computeVWAP(src, isNewPeriod, stDevMultiplier) =>
+	var float sumSrcVol = na
+	var float sumVol = na
+    var float sumSrcSrcVol = na
 
-[vwap, vUpper, vLower] = ta.vwap(vwapSrc, anchor, vwapStDev)
+	sumSrcVol := isNewPeriod ? src * volume : src * volume + sumSrcVol[1]
+	sumVol := isNewPeriod ? volume : volume + sumVol[1]
+	// sumSrcSrcVol calculates the dividend of the equation that is later used to calculate the standard deviation
+	sumSrcSrcVol := isNewPeriod ? volume * math.pow(src, 2) : volume * math.pow(src, 2) + sumSrcSrcVol[1]
+
+	_vwap = sumSrcVol / sumVol
+	variance = sumSrcSrcVol / sumVol - math.pow(_vwap, 2)
+	variance := variance < 0 ? 0 : variance
+	stDev = math.sqrt(variance)
+
+	lowerBand = _vwap - stDev * stDevMultiplier
+	upperBand = _vwap + stDev * stDevMultiplier
+
+	[_vwap, lowerBand, upperBand]
+
+timeChange(period) =>
+	ta.change(time(period))
+
+isNewPeriod = switch anchor
+	"Session" => timeChange("D")
+	"Week" => timeChange("W")
+	"Month" => timeChange("M")
+	"Year" => timeChange("12M")
+	=> false
+
+if na(vwapSrc[1])
+	isNewPeriod := true
+
+float vwapValue = na
+float std = na
+float upperBandValue = na
+float lowerBandValue = na
+
+if not (hideonDWM and timeframe.isdwm)
+    [_vwap, bottom, top] = computeVWAP(vwapSrc, isNewPeriod, vwapStDev)
+    vwapValue := _vwap
+    upperBandValue := vwapPlot and vwapShowBands ? top : na
+    lowerBandValue := vwapPlot and vwapShowBands ? bottom : na
+
+vwapLevelLongValue = vwapLevelLong == 'Top' ? upperBandValue : vwapLevelLong == 'Bottom' ? lowerBandValue : vwapValue
+vwapLevelShortValue = vwapLevelShort == 'Top' ? upperBandValue : vwapLevelShort == 'Bottom' ? lowerBandValue : vwapValue
 
 // Calculations and variables to determine if a signal has been plotted recently
 var sigCheckArrayL = array.new_int (0)
@@ -609,8 +663,11 @@ adxSignalShort      = not useADXShort or (adxABShort == 'Above' and adx >= adxTh
 adxDirSignalLong	= not useADXDirLong or (adxDirLong == 'Rising' and adx >= adx[1]) or (adxDirLong == 'Falling' and adx <= adx[1])
 adxDirSignalShort	= not useADXDirShort or (adxDirShort == 'Rising' and adx >= adx[1]) or (adxDirShort == 'Falling' and adx <= adx[1])
 
-longSignal 			= includeLong and not dayOff and not timeOff and (not useSigCheck or not sigCheckL) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalLong and volSignalLong and maSignalLong and rsiSignalLong and rsiCrossSignalLong and stochSignalLong and srsiSignalLong and bbSignalLong and bbwpSignalLong and pmarpSignalLong and dmiSignalLong and adxSignalLong and adxDirSignalLong
-shortSignal 		= includeShort and not dayOff and not timeOff and (not useSigCheck or not sigCheckS) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalShort and volSignalShort and maSignalShort and rsiSignalShort and rsiCrossSignalShort and stochSignalShort and srsiSignalShort and bbSignalShort and bbwpSignalShort and pmarpSignalShort and dmiSignalShort and adxSignalShort and adxDirSignalShort
+vwapSignalLong      = not useVwapLong or (vwapABLong == 'Above' and close > vwapLevelLongValue) or (vwapABLong == 'Below' and close < vwapLevelLongValue)
+vwapSignalShort     = not useVwapShort or (vwapABShort == 'Above' and close > vwapLevelShortValue) or (vwapABShort == 'Below' and close < vwapLevelShortValue)
+
+longSignal 			= includeLong and not dayOff and not timeOff and (not useSigCheck or not sigCheckL) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalLong and volSignalLong and maSignalLong and rsiSignalLong and rsiCrossSignalLong and stochSignalLong and srsiSignalLong and bbSignalLong and bbwpSignalLong and pmarpSignalLong and dmiSignalLong and adxSignalLong and adxDirSignalLong and vwapSignalLong
+shortSignal 		= includeShort and not dayOff and not timeOff and (not useSigCheck or not sigCheckS) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalShort and volSignalShort and maSignalShort and rsiSignalShort and rsiCrossSignalShort and stochSignalShort and srsiSignalShort and bbSignalShort and bbwpSignalShort and pmarpSignalShort and dmiSignalShort and adxSignalShort and adxDirSignalShort and vwapSignalShort
 
 // Check if a new signal should not be plotted
 
@@ -646,7 +703,11 @@ p2 = plot(plotBB ? lower : na, title='Lower', color=color.blue, linewidth=2)
 fill(p1, p2, title='BB Background', color=fillColor)
 
 // VWAP
-plot(vwapPlot ? vwap : na, title='VWAP', color=color.orange, linewidth=2)
+plot(vwapPlot ? vwapValue : na, title="VWAP", color=vwapColor, linewidth=vwapWidth, offset=vwapOffset)
+
+upperBand = plot(upperBandValue, title="Upper Band", color=color.green, offset=vwapOffset)
+lowerBand = plot(lowerBandValue, title="Lower Band", color=color.green, offset=vwapOffset)
+fill(upperBand, lowerBand, title="Bands Fill", color= vwapShowBands ? color.new(color.green, 95) : na)
 
 // Signals
 plotshape(plotType == 'Shape' ? longSignal : na,  title='Long',  location=location.belowbar, style=shape.triangleup, size=size.small, color=color.blue)
