@@ -127,7 +127,8 @@ pmarpLength     = input.int     (20, title='PMAR Length', minval=1, inline='2', 
 pmarpMAType     = input.string  ('VWMA', title='MA Type', options=[ 'SMA', 'EMA', 'HMA', 'RMA', 'VWMA' ], inline='2', group='PMARP')
 
 // ADX/DMI
-length = input.int(14, title="ADX DI Length", group='ADX/DMI')
+adxLength = input.int(14, title="ADX Length", group='ADX/DMI')
+diLength = input.int(14, title="DI Length", group='ADX/DMI')
 
 // VWAP
 vwapPlot        = input.bool(false, title='Plot VWAP', group='VWAP')
@@ -550,11 +551,11 @@ dUp = ta.change(high)
 dDown = -ta.change(low)
 plusDM = na(dUp) ? na : (dUp > dDown and dUp > 0 ? dUp : 0)
 minusDM = na(dDown) ? na : (dDown > dUp and dDown > 0 ? dDown : 0)
-trur = ta.rma(ta.tr, length)
-plus = fixnan(100 * ta.rma(plusDM, length) / trur)
-minus = fixnan(100 * ta.rma(minusDM, length) / trur)
+trur = ta.rma(ta.tr, diLength)
+plus = fixnan(100 * ta.rma(plusDM, diLength) / trur)
+minus = fixnan(100 * ta.rma(minusDM, diLength) / trur)
 sum = plus + minus
-adx = 100 * ta.rma(math.abs(plus - minus) / (sum == 0 ? 1 : sum), length)
+adx = 100 * ta.rma(math.abs(plus - minus) / (sum == 0 ? 1 : sum), adxLength)
 diff = plus - minus
 
 // VWAP
