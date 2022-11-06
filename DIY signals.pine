@@ -118,12 +118,16 @@ bbwpPriceSource = input.source  (close, title='Source', inline='1', group='BBWP'
 bbwpBasisType   = input.string  ('SMA', title='Basis Type', options=['SMA', 'EMA', 'VWMA'], inline='1', group='BBWP')
 bbwpLength      = input.int     (13, title='Length', minval=1, inline='2', group='BBWP')
 bbwpLookback    = input.int     (252, title='Lookback', minval=1, inline='2', group='BBWP')
+bbwpMaType      = input.string  ('SMA', 'MA Type', options=['SMA', 'EMA', 'VWMA'], inline='3', group='BBWP')
+bbwpMaLength    = input.int     (5, 'MA Length', minval=1, inline='3', group='BBWP')
 
 // PMARP
 pmarpSource     = input.source  (close, title='Source', inline='1', group='PMARP')
 pmarpLookback	= input.int		(350, title='Lookback', minval=1, maxval=1900, inline='1', group='PMARP')
 pmarpLength     = input.int     (20, title='PMAR Length', minval=1, inline='2', group='PMARP')
 pmarpMAType     = input.string  ('VWMA', title='MA Type', options=[ 'SMA', 'EMA', 'HMA', 'RMA', 'VWMA' ], inline='2', group='PMARP')
+pmarpSigMAType  = input.string  ('SMA', title='Signal MA Type', options=[ 'SMA', 'EMA', 'HMA', 'RMA', 'VWMA' ], inline='3', group='PMARP')
+pmarpSigLength  = input.int     (20, title='PMAR SignalLength', minval=1, inline='3', group='PMARP')
 
 // ADX/DMI
 adxLength = input.int(14, title="ADX Length", group='ADX/DMI')
@@ -132,7 +136,7 @@ diLength = input.int(14, title="DI Length", group='ADX/DMI')
 // VWAP
 vwapPlot        = input.bool(false, title='Plot VWAP', group='VWAP')
 hideonDWM       = input.bool(false, title="Hide VWAP on 1D or Above", group="VWAP")
-anchor        = input.string(defval = 'Session', title='Anchor Period', options=['Session', 'Week', 'Month', 'Year'], group='VWAP')
+anchor          = input.string(defval = 'Session', title='Anchor Period', options=['Session', 'Week', 'Month', 'Year'], group='VWAP')
 vwapSrc         = input.source(hlc3, title='Source', group='VWAP')
 vwapColor       = input.color(color.blue, title='Color', group='VWAP')
 vwapWidth       = input.int(2, title='Line Width', minval=1, maxval=4, group='VWAP')
@@ -209,9 +213,13 @@ bbrLevelLong        = input.float   (0.1, title='', minval=-1, maxval=2, inline=
 includeBBWPLong  	= input.bool    (false, title='BBWP', inline='bbwp', group='Long Conditions')
 bbwpMinLong 		= input.float	(0, title='Min', minval=0, maxval=100, step=0.01,	inline='bbwp', group='Long Conditions')
 bbwpMaxLong			= input.float	(35, title='Max', minval=0, maxval=100, step=0.01,	inline='bbwp', group='Long Conditions')
+includeBBWPMaDLong  = input.bool    (false, title='BBWP MA Direction', inline='bbwpMa', group='Long Conditions')
+bbwpMaDLong         = input.string  ('Down', title='', options=['Up', 'Down'], inline='bbwpMa', group='Long Conditions')
 includePMARPLong 	= input.bool    (false, title='PMARP', inline='pmarp', group='Long Conditions')
 pmarpLongAB     	= input.string  ('Below', title='', options=['Above', 'Below'], inline='pmarp', group='Long Conditions')
 pmarpThresholdLong	= input.float   (15, title='', inline='pmarp', group='Long Conditions')
+usePmarpCrossMaLong = input.bool    (false, title='PMARP Crossing MA', inline='pmarp2', group='Long Conditions')
+pmarpCrossDirLong   = input.string  ('Up', title='', options=['Up', 'Down'], inline='pmarp2', group='Long Conditions')
 useDMILong     		= input.bool    (false, title='DMI', inline='dmi', group='Long Conditions')
 dmiPNLong      		= input.string  ('Positive', title='', options=['Positive', 'Negative', 'Custom'], inline='dmi', group='Long Conditions')
 dmiABLong           = input.string  ('Above', title='DMI', options=['Above', 'Below'], inline='dmi 2', group='Long Conditions')
@@ -281,9 +289,13 @@ bbrLevelShort       = input.float   (0.9, title='', minval=-1, maxval=2, inline=
 includeBBWPShort 	= input.bool    (false, title='BBWP', inline='bbwp', group='Short Conditions')
 bbwpMinShort 		= input.float	(0, title='Min', minval=0, maxval=100, step=0.01,	inline='bbwp', group='Short Conditions')
 bbwpMaxShort		= input.float	(35, title='Max', minval=0, maxval=100, step=0.01,	inline='bbwp', group='Short Conditions')
+includeBBWPMaDShort = input.bool    (false, title='BBWP MA Direction', inline='bbwpMa', group='Short Conditions')
+bbwpMaDShort        = input.string  ('Down', title='', options=['Up', 'Down'], inline='bbwpMa', group='Short Conditions')
 includePMARPShort 	= input.bool    (false, title='PMARP', inline='pmarp', group='Short Conditions')
 pmarpShortAB    	= input.string  ('Above', title='', options=['Above', 'Below'], inline='pmarp', group='Short Conditions')
 pmarpThresholdShort	= input.float   (85, title='', inline='pmarp', group='Short Conditions')
+usePmarpCrossMaShort= input.bool    (false, title='PMARP Crossing MA', inline='pmarp2', group='Short Conditions')
+pmarpCrossDirShort  = input.string  ('Down', title='', options=['Up', 'Down'], inline='pmarp2', group='Short Conditions')
 useDMIShort     	= input.bool    (false, title='DMI', inline='dmi', group='Short Conditions')
 dmiPNShort          = input.string  ('Positive', title='', options=['Positive', 'Negative', 'Custom'], inline='dmi', group='Short Conditions')
 dmiABShort          = input.string  ('Above', title='DMI', options=['Above', 'Below'], inline='dmi 2', group='Short Conditions')
@@ -522,7 +534,10 @@ f_bbwp ( _price, _bbwLen, _bbwpLen, _type ) =>
     _return = bar_index >= _bbwLen ? ( _bbwSum / _len) * 100 : na
     _return
 
-bbwp	= f_bbwp ( bbwpPriceSource, bbwpLength, bbwpLookback, bbwpBasisType )
+bbwp = f_bbwp ( bbwpPriceSource, bbwpLength, bbwpLookback, bbwpBasisType )
+bbwpMa = f_ma (bbwp, bbwpMaLength, bbwpMaType)
+
+bbwpMaDirection = bbwpMa > bbwpMa[1] ? 'Up' : bbwpMa < bbwpMa[1] ? 'Down' : na
 
 // PMARP
 // Credit to The_Caretaker
@@ -544,6 +559,10 @@ f_pmarp ( _price, _pmarLen, _pmarpLen, _type_p ) =>
 ma          = f_ma_val ( pmarpSource, pmarpMAType, pmarpLength )
 pmar        = pmarpSource / ma
 pmarp       = f_pmarp ( pmarpSource, pmarpLength, pmarpLookback, pmarpMAType ) 
+pmarpMa     = f_ma(pmarp, pmarpSigLength, pmarpSigMAType)
+
+pmarpCrossUp = ta.crossover(pmarp, pmarpMa)
+pmarpCrossDown = ta.crossunder(pmarp, pmarpMa)
 
 // ADX/DMI
 dUp = ta.change(high)
@@ -655,8 +674,14 @@ bbSignalShort       = not includeBBShort or ((not includBBBiasShort or shortBias
 bbwpSignalLong		= (not includeBBWPLong or (bbwp < bbwpMaxLong and bbwp > bbwpMinLong)) and (not includeBBRLong or bbrSignalLong)
 bbwpSignalShort		= (not includeBBWPShort or (bbwp < bbwpMaxShort and bbwp > bbwpMinShort)) and (not includeBBRShort or bbrSignalShort)
 
+bbwpMaSignalLong    = not includeBBWPMaDLong or (includeBBWPMaDLong and bbwpMaDirection == bbwpMaDLong)
+bbwpMaSignalShort   = not includeBBWPMaDShort or (includeBBWPMaDShort and bbwpMaDirection == bbwpMaDShort)
+
 pmarpSignalLong		= not includePMARPLong or (pmarpLongAB == 'Above' and pmarp >= pmarpThresholdLong) or (pmarpLongAB == 'Below' and pmarp <= pmarpThresholdLong)
 pmarpSignalShort	= not includePMARPShort or (pmarpShortAB == 'Above' and pmarp >= pmarpThresholdShort) or (pmarpShortAB == 'Below' and pmarp <= pmarpThresholdShort)
+
+pmarpMaCrossLong    = not usePmarpCrossMaLong or (pmarpCrossDirLong == 'Up' and pmarpCrossUp) or (pmarpCrossDirLong == 'Down' and pmarpCrossDown)
+pmarpMaCrossShort   = not usePmarpCrossMaShort or (pmarpCrossDirShort == 'Up' and pmarpCrossUp) or (pmarpCrossDirShort == 'Down' and pmarpCrossDown)
 
 dmiSignalLong       = not useDMILong or ((not dmiFlipLong or (diff > 0 and diff [1] <= 0) or (diff < 0 and diff[1] >= 0)) and ((dmiPNLong == 'Positive' and diff > 0) or (dmiPNLong == 'Negative' and diff < 0) or dmiPNLong == 'Custom' and (dmiABLong == 'Above' and diff >= dmiThresholdLong) or (dmiABLong == 'Below' and diff <= dmiThresholdLong)))
 dmiSignalShort       = not useDMIShort or ((not dmiFlipShort or (diff > 0 and diff [1] <= 0) or (diff < 0 and diff[1] >= 0)) and ((dmiPNShort == 'Positive' and diff > 0) or (dmiPNShort == 'Negative' and diff < 0) or dmiPNShort == 'Custom' and (dmiABShort == 'Above' and diff >= dmiThresholdShort) or (dmiABShort == 'Below' and diff <= dmiThresholdShort)))
@@ -670,8 +695,8 @@ adxDirSignalShort	= not useADXDirShort or (adxDirShort == 'Rising' and adx >= ad
 vwapSignalLong      = not useVwapLong or (vwapABLong == 'Above' and close > vwapLevelLongValue) or (vwapABLong == 'Below' and close < vwapLevelLongValue)
 vwapSignalShort     = not useVwapShort or (vwapABShort == 'Above' and close > vwapLevelShortValue) or (vwapABShort == 'Below' and close < vwapLevelShortValue)
 
-longSignal 			= includeLong and not dayOff and not timeOff and (not useSigCheck or not sigCheckL) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalLong and volSignalLong and maSignalLong and rsiSignalLong and rsiCrossSignalLong and stochSignalLong and srsiSignalLong and bbSignalLong and bbwpSignalLong and pmarpSignalLong and dmiSignalLong and adxSignalLong and adxDirSignalLong and vwapSignalLong
-shortSignal 		= includeShort and not dayOff and not timeOff and (not useSigCheck or not sigCheckS) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalShort and volSignalShort and maSignalShort and rsiSignalShort and rsiCrossSignalShort and stochSignalShort and srsiSignalShort and bbSignalShort and bbwpSignalShort and pmarpSignalShort and dmiSignalShort and adxSignalShort and adxDirSignalShort and vwapSignalShort
+longSignal 			= includeLong and not dayOff and not timeOff and (not useSigCheck or not sigCheckL) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalLong and volSignalLong and maSignalLong and rsiSignalLong and rsiCrossSignalLong and stochSignalLong and srsiSignalLong and bbSignalLong and bbwpSignalLong and bbwpMaSignalLong and pmarpSignalLong and pmarpMaCrossLong and dmiSignalLong and adxSignalLong and adxDirSignalLong and vwapSignalLong
+shortSignal 		= includeShort and not dayOff and not timeOff and (not useSigCheck or not sigCheckS) and (not onlyConfirmed or barstate.isconfirmed) and priceSignalShort and volSignalShort and maSignalShort and rsiSignalShort and rsiCrossSignalShort and stochSignalShort and srsiSignalShort and bbSignalShort and bbwpSignalShort and bbwpMaSignalShort and pmarpSignalShort and pmarpMaCrossShort and dmiSignalShort and adxSignalShort and adxDirSignalShort and vwapSignalShort
 
 // Check if a new signal should not be plotted
 
