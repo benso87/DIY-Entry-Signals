@@ -26,7 +26,7 @@ priceSource = input.source(close, title='Price Source', group='Price')
 
 // Volume
 vMaLength   = input.int (20, title='MA Length', minval=1, group='Volume')
-vMaType     = input.string ('SMA', title='MA Type', options=['SMA', 'EMA', 'WMA'], group='Volume')
+vMaType     = input.string ('SMA', title='MA Type', options=['SMA', 'EMA', 'WMA', 'VWEMA'], group='Volume')
 vMult     = input.float (1.5, title='Multiplier', minval=0, group='Volume', tooltip='Volume needs to be above this much times the previous volume bar to trigger a signal.')
 
 // Moving Averages
@@ -34,35 +34,35 @@ maSource    = input.source  (close, title='Source', inline='source', group='Movi
 includeMA1	= input.bool	(false, title='', inline='MA 1', group='Moving Averages')
 ma1Color 	= input.color	(#ffeb3b, title='MA 1', inline='MA 1', group='Moving Averages')
 ma1Length 	= input.int		(21, title='Length', minval=1, inline='MA 1', group='Moving Averages')
-ma1Type 	= input.string	('EMA', title='Type', options=['SMA','EMA'], inline='MA 1', group='Moving Averages')
+ma1Type 	= input.string	('EMA', title='Type', options=['SMA','EMA','VWEMA'], inline='MA 1', group='Moving Averages')
 includeMA2	= input.bool	(false, title='', inline='MA 2', group='Moving Averages')
 ma2Color 	= input.color	(#00e676, title='MA 2', inline='MA 2', group='Moving Averages')
 ma2Length 	= input.int		(55, title='Length', minval=1, inline='MA 2', group='Moving Averages')
-ma2Type 	= input.string	('EMA', title='Type', options=['SMA','EMA'], inline='MA 2', group='Moving Averages')
+ma2Type 	= input.string	('EMA', title='Type', options=['SMA','EMA','VWEMA'], inline='MA 2', group='Moving Averages')
 includeMA3	= input.bool	(false, title='', inline='MA 3', group='Moving Averages')
 ma3Color 	= input.color	(#00bcd4, title='MA 3', inline='MA 3', group='Moving Averages')
 ma3Length 	= input.int		(100, title='Length', minval=1, inline='MA 3', group='Moving Averages')
-ma3Type 	= input.string	('EMA', title='Type', options=['SMA','EMA'], inline='MA 3', group='Moving Averages')
+ma3Type 	= input.string	('EMA', title='Type', options=['SMA','EMA','VWEMA'], inline='MA 3', group='Moving Averages')
 includeMA4	= input.bool	(false, title='', inline='MA 4', group='Moving Averages')
 ma4Color 	= input.color	(#e040fb, title='MA 4', inline='MA 4', group='Moving Averages')
 ma4Length 	= input.int		(200, title='Length', minval=1, inline='MA 4', group='Moving Averages')
-ma4Type 	= input.string	('EMA', title='Type', options=['SMA','EMA'], inline='MA 4', group='Moving Averages')
+ma4Type 	= input.string	('EMA', title='Type', options=['SMA','EMA','VWEMA'], inline='MA 4', group='Moving Averages')
 includeMA5	= input.bool	(false, title='', inline='MA 5', group='Moving Averages')
 ma5Color 	= input.color	(color.red, title='MA 5', inline='MA 5', group='Moving Averages')
 ma5Length 	= input.int		(300, title='Length', minval=1, inline='MA 5', group='Moving Averages')
-ma5Type 	= input.string	('EMA', title='Type', options=['SMA','EMA'], inline='MA 5', group='Moving Averages')
+ma5Type 	= input.string	('EMA', title='Type', options=['SMA','EMA','VWEMA'], inline='MA 5', group='Moving Averages')
 includeMA6	= input.bool	(false, title='', inline='MA 6', group='Moving Averages')
 ma6Color 	= input.color	(color.blue, title='MA 6', inline='MA 6', group='Moving Averages')
 ma6Length 	= input.int		(400, title='Length', minval=1, inline='MA 6', group='Moving Averages')
-ma6Type 	= input.string	('EMA', title='Type', options=['SMA','EMA'], inline='MA 6', group='Moving Averages')
+ma6Type 	= input.string	('EMA', title='Type', options=['SMA','EMA','VWEMA'], inline='MA 6', group='Moving Averages')
 includeMA7	= input.bool	(false, title='', inline='MA 7', group='Moving Averages')
 ma7Color 	= input.color	(color.white, title='MA 7', inline='MA 7', group='Moving Averages')
 ma7Length 	= input.int		(500, title='Length', minval=1, inline='MA 7', group='Moving Averages')
-ma7Type 	= input.string	('EMA', title='Type', options=['SMA','EMA'], inline='MA 7', group='Moving Averages')
+ma7Type 	= input.string	('EMA', title='Type', options=['SMA','EMA','VWEMA'], inline='MA 7', group='Moving Averages')
 includeMA8	= input.bool	(false, title='', inline='MA 8', group='Moving Averages')
 ma8Color 	= input.color	(color.orange, title='MA 8', inline='MA 8', group='Moving Averages')
 ma8Length 	= input.int		(600, title='Length', minval=1, inline='MA 8', group='Moving Averages')
-ma8Type 	= input.string	('EMA', title='Type', options=['SMA','EMA'], inline='MA 8', group='Moving Averages')
+ma8Type 	= input.string	('EMA', title='Type', options=['SMA','EMA','VWEMA'], inline='MA 8', group='Moving Averages')
 
 // Moving Average Crosses 
 maCrosses    = input.bool   (false, title='Highlight moving average crosses', group='Moving Average Crosses', inline='1')
@@ -115,18 +115,18 @@ shortFill   = input.color  (color.new(color.red, transp=80), title='Short Bias',
 
 // BBWP
 bbwpPriceSource = input.source  (close, title='Source', inline='1', group='BBWP')
-bbwpBasisType   = input.string  ('SMA', title='Basis Type', options=['SMA', 'EMA', 'VWMA'], inline='1', group='BBWP')
+bbwpBasisType   = input.string  ('SMA', title='Basis Type', options=['SMA', 'EMA', 'VWMA', 'VWEMA'], inline='1', group='BBWP')
 bbwpLength      = input.int     (13, title='Length', minval=1, inline='2', group='BBWP')
 bbwpLookback    = input.int     (252, title='Lookback', minval=1, inline='2', group='BBWP')
-bbwpMaType      = input.string  ('SMA', 'MA Type', options=['SMA', 'EMA', 'VWMA'], inline='3', group='BBWP')
+bbwpMaType      = input.string  ('SMA', 'MA Type', options=['SMA', 'EMA', 'VWMA', 'VWEMA'], inline='3', group='BBWP')
 bbwpMaLength    = input.int     (5, 'MA Length', minval=1, inline='3', group='BBWP')
 
 // PMARP
 pmarpSource     = input.source  (close, title='Source', inline='1', group='PMARP')
 pmarpLookback	= input.int		(350, title='Lookback', minval=1, maxval=1900, inline='1', group='PMARP')
 pmarpLength     = input.int     (20, title='PMAR Length', minval=1, inline='2', group='PMARP')
-pmarpMAType     = input.string  ('VWMA', title='MA Type', options=[ 'SMA', 'EMA', 'HMA', 'RMA', 'VWMA' ], inline='2', group='PMARP')
-pmarpSigMAType  = input.string  ('SMA', title='Signal MA Type', options=[ 'SMA', 'EMA', 'HMA', 'RMA', 'VWMA' ], inline='3', group='PMARP')
+pmarpMAType     = input.string  ('VWMA', title='MA Type', options=[ 'SMA', 'EMA', 'HMA', 'RMA', 'VWMA', 'VWEMA' ], inline='2', group='PMARP')
+pmarpSigMAType  = input.string  ('SMA', title='Signal MA Type', options=[ 'SMA', 'EMA', 'HMA', 'RMA', 'VWMA', 'VWEMA' ], inline='3', group='PMARP')
 pmarpSigLength  = input.int     (20, title='PMAR SignalLength', minval=1, inline='3', group='PMARP')
 
 // ADX/DMI
@@ -314,6 +314,14 @@ vwapLevelShort      = input.string  ('VWAP', title='', options=['Top', 'VWAP', '
 //////////////////////////////////////////////////////////////
 // Calculations
 
+// Volume-weighted EMA
+// VWEMA = EMA(price * volume, length) / EMA(volume, length)
+// Weights each bar's contribution by its volume, giving heavier-volume bars more influence.
+f_vwema(source, length) =>
+    num = ta.ema(source * volume, length)
+    den = ta.ema(volume, length)
+    den == 0 ? source : num / den
+
 // Function to calculate moving averages based on chosen type
 f_ma(source, length, type) =>
     switch type
@@ -321,6 +329,7 @@ f_ma(source, length, type) =>
         'EMA' => ta.ema(source, length)
         'RMA' => ta.rma(source, length)
         'WMA' => ta.wma(source, length)
+        'VWEMA' => f_vwema(source, length)
 
 // volume
 vMa = f_ma(volume, vMaLength, vMaType)
@@ -520,7 +529,7 @@ fillColor = biasFill and longBias ? longFill : biasFill and shortBias ? shortFil
 // BBWP
 // Credit to The_Caretaker
 f_maType ( _price, _len, _type ) =>
-    _type == 'SMA' ? ta.sma ( _price, _len ) : _type == 'EMA' ? ta.ema ( _price, _len ) : ta.vwma ( _price, _len )
+    _type == 'SMA' ? ta.sma ( _price, _len ) : _type == 'EMA' ? ta.ema ( _price, _len ) : _type == 'VWEMA' ? f_vwema ( _price, _len ) : ta.vwma ( _price, _len )
 
 f_bbwp ( _price, _bbwLen, _bbwpLen, _type ) =>
     float _basis = f_maType ( _price, _bbwLen, _type )
@@ -545,7 +554,7 @@ f_prior_sum ( _P, _X ) =>
     math.sum ( _P[1], _X - 1 )
 
 f_ma_val ( _P, _typ, _len ) =>
-    _typ == 'SMA' ? ta.sma ( _P, _len ) : _typ == 'EMA' ? ta.ema ( _P, _len ) : _typ == 'RMA' ? ta.rma ( _P, _len ) : _typ == 'HMA' ? ta.hma ( _P, _len ) : ta.vwma ( _P, _len )
+    _typ == 'SMA' ? ta.sma ( _P, _len ) : _typ == 'EMA' ? ta.ema ( _P, _len ) : _typ == 'RMA' ? ta.rma ( _P, _len ) : _typ == 'HMA' ? ta.hma ( _P, _len ) : _typ == 'VWEMA' ? f_vwema ( _P, _len ) : ta.vwma ( _P, _len )
 
 f_pmarp ( _price, _pmarLen, _pmarpLen, _type_p ) =>
     _pmar = math.abs ( _price / f_ma_val ( _price, _type_p, _pmarLen ))
@@ -559,7 +568,7 @@ f_pmarp ( _price, _pmarLen, _pmarpLen, _type_p ) =>
 ma          = f_ma_val ( pmarpSource, pmarpMAType, pmarpLength )
 pmar        = pmarpSource / ma
 pmarp       = f_pmarp ( pmarpSource, pmarpLength, pmarpLookback, pmarpMAType ) 
-pmarpMa     = f_ma(pmarp, pmarpSigLength, pmarpSigMAType)
+pmarpMa     = f_ma_val(pmarp, pmarpSigMAType, pmarpSigLength)
 
 pmarpCrossUp = ta.crossover(pmarp, pmarpMa)
 pmarpCrossDown = ta.crossunder(pmarp, pmarpMa)
